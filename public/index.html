@@ -1,0 +1,2021 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ofis</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2222%22 fill=%22%23191918%22/><circle cx=%2250%22 cy=%2254%22 r=%2228%22 fill=%22%2310b981%22/><rect x=%2228%22 y=%2240%22 width=%2244%22 height=%2224%22 rx=%2210%22 fill=%22%23022c22%22/><circle cx=%2241%22 cy=%2252%22 r=%224.5%22 fill=%22%236ee7b7%22/><circle cx=%2259%22 cy=%2252%22 r=%224.5%22 fill=%22%236ee7b7%22/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script type="importmap">
+{
+  "imports": {
+    "three": "/vendor/three.module.min.js",
+    "three/addons/controls/OrbitControls.js": "/vendor/OrbitControls.js"
+  }
+}
+</script>
+<style>
+:root {
+  --bg: #191918;
+  --bg-alt: #1f1f1e;
+  --surface: #262624;
+  --surface-2: #2d2d2b;
+  --border: #3a3a37;
+  --border-soft: #2f2f2d;
+  --text: #ece9e4;
+  --text-dim: #a8a49c;
+  --text-faint: #706c64;
+  --accent: #d97757;
+  --accent-hover: #e8926f;
+  --accent-soft: rgba(217, 119, 87, 0.14);
+  --emerald: #10b981;
+  --emerald-light: #34d399;
+  --emerald-soft: rgba(16, 185, 129, 0.16);
+  --green: #7fb069;
+  --green-soft: rgba(127, 176, 105, 0.15);
+  --yellow: #e5b567;
+  --yellow-soft: rgba(229, 181, 103, 0.16);
+  --red: #d97878;
+  --red-soft: rgba(217, 120, 120, 0.16);
+  --mono: 'JetBrains Mono', monospace;
+  --sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --radius: 10px;
+  --radius-lg: 14px;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+}
+
+.app-shell {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  height: 100vh;
+}
+
+/* TOPBAR */
+.topbar {
+  background: var(--bg-alt);
+  border-bottom: 1px solid var(--border);
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  z-index: 20;
+}
+
+.brand-area {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand-logo {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  display: grid;
+  place-items: center;
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--accent);
+}
+
+.brand-title h1 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.live-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--emerald);
+  box-shadow: 0 0 8px var(--emerald);
+  display: inline-block;
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.token-pill {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text-dim);
+}
+
+.btn {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  transition: all 0.16s ease;
+}
+
+.btn:hover {
+  border-color: var(--accent);
+}
+
+.btn-primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #191918;
+  font-weight: 700;
+}
+
+.btn-primary:hover {
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
+}
+
+/* MAIN WORKSPACE (TAMAMEN 3D) */
+.workspace {
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 14px 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.office-3d-stage {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at 50% 35%, #132520 0%, #0d131a 55%, #090b10 100%);
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: inset 0 0 80px rgba(0, 0, 0, 0.75), 0 12px 40px rgba(0, 0, 0, 0.45);
+}
+
+#threeCanvasContainer {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  inset: 0;
+  cursor: grab;
+}
+
+#threeCanvasContainer:active {
+  cursor: grabbing;
+}
+
+/* 3D SAĞ ÜST TEK BUTON (SERBEST GEZİNME / İSTASYON DÜZENİ) */
+.hud-top-right {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  z-index: 10;
+}
+
+.hud-btn {
+  background: rgba(15, 23, 34, 0.88);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(16, 185, 129, 0.45);
+  color: #ecfdf5;
+  font-size: 12.5px;
+  font-weight: 700;
+  padding: 8px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  transition: all 0.15s ease;
+}
+
+.hud-btn:hover {
+  border-color: #34d399;
+  color: #6ee7b7;
+  background: rgba(15, 23, 42, 0.96);
+  transform: translateY(-1px);
+}
+
+/* 3D FLOATING LABELS LAYER */
+#labels3DLayer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 6;
+}
+
+.mascot-3d-label {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  pointer-events: auto;
+  cursor: pointer;
+  user-select: none;
+  transition: opacity 0.15s ease;
+}
+
+.mascot-3d-bubble {
+  max-width: 240px;
+  background: rgba(10, 18, 28, 0.92);
+  border: 1.5px solid var(--m-color, #10b981);
+  color: #f8fafc;
+  font-family: var(--mono);
+  font-size: 11px;
+  padding: 5px 10px;
+  border-radius: 10px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.55), 0 0 12px var(--m-glow, rgba(16, 185, 129, 0.35));
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  animation: floatBubble 2.4s ease-in-out infinite;
+}
+
+@keyframes floatBubble {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+.mascot-3d-nametag {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(15, 23, 34, 0.88);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  padding: 3px 9px;
+  border-radius: 99px;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #f1f5f9;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45);
+}
+
+.mascot-3d-nametag.is-gm {
+  background: linear-gradient(135deg, rgba(6, 78, 59, 0.92), rgba(2, 44, 34, 0.95));
+  border: 1.5px solid #34d399;
+  font-size: 12.5px;
+  padding: 4px 12px;
+  box-shadow: 0 0 18px rgba(16, 185, 129, 0.45);
+}
+
+.mascot-3d-scale-pill {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  font-weight: 700;
+  padding: 1px 5px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  color: #cbd5e1;
+}
+
+.status-badge {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 9px;
+  border-radius: 99px;
+}
+
+.status-bosta { background: var(--surface-2); color: var(--text-dim); border: 1px solid var(--border); }
+.status-dusunuyor { background: var(--yellow-soft); color: var(--yellow); border: 1px solid rgba(229,181,103,0.4); }
+.status-calisiyor { background: var(--accent-soft); color: var(--accent); border: 1px solid rgba(217,119,87,0.4); }
+.status-bitti { background: var(--green-soft); color: var(--green); border: 1px solid rgba(127,176,105,0.4); }
+.status-hata { background: var(--red-soft); color: var(--red); border: 1px solid rgba(217,120,120,0.4); }
+
+.mini-btn {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 5px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.mini-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* 3D SELECTED WORKER INSPECTOR CARD */
+.hud-inspector-card {
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+  width: 340px;
+  max-width: calc(100% - 32px);
+  background: rgba(15, 22, 31, 0.9);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(52, 211, 153, 0.4);
+  border-radius: 14px;
+  padding: 14px 16px;
+  color: #f1f5f9;
+  z-index: 10;
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.65);
+  display: none;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.hud-inspector-card.open {
+  display: flex;
+}
+
+/* 3D LIVE LOG MINI OVERLAY */
+.hud-live-feed {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  width: 340px;
+  max-width: calc(100% - 32px);
+  background: rgba(15, 22, 31, 0.84);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 12px;
+  padding: 10px 13px;
+  z-index: 10;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.5);
+  pointer-events: auto;
+}
+
+.hud-live-feed-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #94a3b8;
+  margin-bottom: 6px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.hud-live-feed-list {
+  max-height: 95px;
+  overflow-y: auto;
+  font-family: var(--mono);
+  font-size: 11px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.log-item {
+  display: flex;
+  gap: 8px;
+  color: var(--text-dim);
+}
+
+.log-item .l-time { color: var(--text-faint); flex-shrink: 0; }
+.log-item.basari { color: var(--green); }
+.log-item.hata { color: var(--red); }
+.log-item.arac { color: var(--accent); }
+
+/* BOTTOM COMMAND BAR */
+.command-dock {
+  background: var(--bg-alt);
+  border-top: 1px solid var(--border);
+  padding: 14px 24px;
+  z-index: 20;
+}
+
+.command-form {
+  max-width: 1500px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+}
+
+.cmd-input {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 9px;
+  padding: 11px 14px;
+  font-size: 13.5px;
+  font-family: var(--sans);
+  outline: none;
+}
+
+.cmd-input:focus {
+  border-color: var(--accent);
+}
+
+/* MODAL */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.76);
+  backdrop-filter: blur(4px);
+  display: none;
+  place-items: center;
+  z-index: 100;
+  padding: 20px;
+}
+
+.modal-backdrop.open {
+  display: grid;
+}
+
+.modal-card {
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  width: 100%;
+  max-width: 600px;
+  max-height: 88vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6);
+}
+
+.modal-card.modal-lg {
+  max-width: 860px;
+}
+
+.modal-head {
+  padding: 14px 18px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.modal-body {
+  padding: 20px 24px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.form-group label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-dim);
+}
+
+.code-block {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px;
+  font-family: var(--mono);
+  font-size: 12.5px;
+  white-space: pre-wrap;
+  color: var(--text);
+  overflow-y: auto;
+}
+
+/* MARKDOWN VIEWER STYLES */
+.md-rendered {
+  background: var(--bg);
+  border: 1px solid var(--border-soft);
+  border-radius: 10px;
+  padding: 22px 26px;
+  color: var(--text);
+  font-size: 14.5px;
+  line-height: 1.7;
+}
+
+.md-rendered h1,
+.md-rendered h2,
+.md-rendered h3,
+.md-rendered h4 {
+  color: var(--text);
+  margin: 20px 0 10px 0;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+.md-rendered h1:first-child,
+.md-rendered h2:first-child {
+  margin-top: 0;
+}
+
+.md-rendered h1 {
+  font-size: 22px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+.md-rendered h2 {
+  font-size: 18px;
+  color: var(--accent);
+}
+
+.md-rendered h3 {
+  font-size: 15.5px;
+}
+
+.md-rendered p {
+  margin: 0 0 12px 0;
+}
+
+.md-rendered ul,
+.md-rendered ol {
+  margin: 0 0 14px 0;
+  padding-left: 22px;
+}
+
+.md-rendered li {
+  margin-bottom: 5px;
+}
+
+.md-rendered code {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  padding: 2px 6px;
+  border-radius: 5px;
+  color: var(--accent);
+}
+
+.md-rendered pre {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px;
+  overflow-x: auto;
+  margin: 0 0 14px 0;
+}
+
+.md-rendered pre code {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--text);
+}
+
+.md-rendered blockquote {
+  margin: 0 0 14px 0;
+  padding: 10px 16px;
+  border-left: 3px solid var(--accent);
+  background: var(--surface);
+  color: var(--text-dim);
+  border-radius: 0 8px 8px 0;
+}
+
+.md-rendered hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 18px 0;
+}
+
+.md-rendered table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0 0 16px 0;
+  font-size: 13.5px;
+}
+
+.md-rendered th,
+.md-rendered td {
+  border: 1px solid var(--border);
+  padding: 8px 12px;
+  text-align: left;
+}
+
+.md-rendered th {
+  background: var(--surface);
+  font-weight: 700;
+}
+
+.md-rendered a {
+  color: var(--accent);
+  text-decoration: underline;
+}
+</style>
+</head>
+<body>
+<div class="app-shell">
+  <header class="topbar">
+    <div class="brand-area">
+      <div class="brand-logo">&gt;_</div>
+      <div class="brand-title">
+        <h1>Ofis</h1>
+      </div>
+      <span class="live-dot" id="sseDot" title="Gemini Bağlantısı Aktif"></span>
+    </div>
+
+    <div class="topbar-right">
+      <div class="token-pill">
+        Token: <strong id="tokTotal" style="color:var(--text);">0</strong>
+      </div>
+      <button type="button" class="btn btn-primary" onclick="openModal('modalAddWorker')">+ Çalışan Ekle</button>
+    </div>
+  </header>
+
+  <main class="workspace" id="mainWorkspace">
+    <section class="office-3d-stage" id="office3DStage">
+      <div id="threeCanvasContainer"></div>
+      <div id="labels3DLayer"></div>
+
+      <!-- Sağ Üst Tek Geçiş Butonu: Serbest Gezinme <-> İstasyon Düzeni -->
+      <div class="hud-top-right">
+        <button type="button" class="hud-btn" id="btnToggleMotionMode" onclick="toggle3DMotionMode()">
+          🧭 Serbest Gezinme
+        </button>
+      </div>
+
+      <!-- Seçili 3D Maskot Detay Kartı -->
+      <div class="hud-inspector-card" id="hudInspectorCard">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span id="inspColorDot" style="width:12px;height:12px;border-radius:50%;display:inline-block;"></span>
+            <strong id="inspRoleName" style="font-size:14.5px;">Genel Müdür</strong>
+            <span id="inspScaleBadge" class="mascot-3d-scale-pill">%100 Boyut</span>
+          </div>
+          <button type="button" class="mini-btn" onclick="close3DInspector()">✕</button>
+        </div>
+        <div id="inspDesc" style="font-size:12px;color:#cbd5e1;"></div>
+        <div id="inspAction" style="font-family:var(--mono);font-size:11.5px;background:rgba(0,0,0,0.4);padding:7px 10px;border-radius:8px;border:1px solid rgba(255,255,255,0.1);"></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding-top:4px;">
+          <span id="inspFolder" style="font-family:var(--mono);font-size:10.5px;color:#94a3b8;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
+          <div style="display:flex;gap:6px;flex-shrink:0;">
+            <button type="button" class="mini-btn" id="inspBtnMd">📄 GEMINI.md</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sağ Alt Canlı Ofis Akışı -->
+      <div class="hud-live-feed">
+        <div class="hud-live-feed-head">
+          <span>⚡ Canlı Ofis Akışı</span>
+          <span id="hudActiveBadge" style="font-family:var(--mono);color:#34d399;">0 Aktif</span>
+        </div>
+        <div class="hud-live-feed-list" id="hudLiveLogList">
+          <div class="log-item">
+            <span class="l-time">--:--:--</span>
+            <span>Ofis hazır.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="command-dock">
+    <form class="command-form" onsubmit="submitTaskForm(event)">
+      <input type="text" id="inputPrompt" class="cmd-input" placeholder="Görev veya rapor talebi yazın..." required autocomplete="off">
+      <button type="submit" class="btn btn-primary" style="padding:11px 22px;">Gönder</button>
+    </form>
+  </footer>
+</div>
+
+<!-- MODAL: MARKDOWN VIEWER POPUP -->
+<div class="modal-backdrop" id="modalMdViewer" onclick="if(event.target===this)closeModal('modalMdViewer')">
+  <div class="modal-card modal-lg">
+    <div class="modal-head">
+      <div>
+        <strong id="viewerTitle" style="font-size:15px;">Rapor Görüntüleyici</strong>
+        <div id="viewerPath" style="font-family:var(--mono);font-size:11px;color:var(--text-faint);margin-top:2px;"></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <button type="button" class="mini-btn" id="btnToggleRaw" onclick="toggleViewerRaw()">📝 Ham .md</button>
+        <button type="button" class="mini-btn" onclick="copyViewerMarkdown()">📋 Kopyala</button>
+        <button type="button" class="mini-btn" onclick="closeModal('modalMdViewer')">✕ Kapat</button>
+      </div>
+    </div>
+    <div class="modal-body">
+      <div id="viewerRendered" class="md-rendered"></div>
+      <pre id="viewerRaw" class="code-block" style="display:none;"></pre>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: YENİ ÇALIŞAN EKLE -->
+<div class="modal-backdrop" id="modalAddWorker" onclick="if(event.target===this)closeModal('modalAddWorker')">
+  <div class="modal-card">
+    <div class="modal-head">
+      <strong>Yeni Çalışan Ekle</strong>
+      <button class="mini-btn" onclick="closeModal('modalAddWorker')">✕ Kapat</button>
+    </div>
+    <form class="modal-body" onsubmit="submitAddWorker(event)">
+      <div class="form-group">
+        <label>Çalışan Unvanı</label>
+        <input type="text" id="wRol" class="cmd-input" placeholder="Örn: Muhasebeci, Güvenlik Uzmanı" required>
+      </div>
+      <div class="form-group">
+        <label>Bölüm / Oda</label>
+        <input type="text" id="wEkipAdi" class="cmd-input" value="Yönetim" required>
+      </div>
+      <div class="form-group">
+        <label>Maskot Rengi</label>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <input type="color" id="wRenk" value="#3b82f6" style="width:48px;height:40px;border:1px solid var(--border);background:var(--surface);border-radius:8px;cursor:pointer;">
+          <span style="font-size:12px;color:var(--text-dim);">Genel Müdürden yarı yarıya küçük (%50) boyutta bu renkte oluşturulur.</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Klasör Yolu (Boş bırakılırsa otomatik oluşturulur)</label>
+        <input type="text" id="wKlasor" class="cmd-input" placeholder="D:/ofis/calisanlar/...">
+      </div>
+      <div class="form-group">
+        <label>Görev Açıklaması</label>
+        <input type="text" id="wAciklama" class="cmd-input" placeholder="Ne iş yapar?" required>
+      </div>
+      <div style="display:flex;justify-content:flex-end;gap:8px;">
+        <button type="button" class="btn" onclick="closeModal('modalAddWorker')">İptal</button>
+        <button type="submit" class="btn btn-primary">Ekle</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+let appState = {
+  config: { ekipler: [], calisanlar: [] },
+  durumlar: {},
+  toplamToken: { input: 0, output: 0, cacheRead: 0 },
+  gorevler: [],
+  raporlar: []
+};
+
+let currentMotionMode = 'station'; // 'station' | 'wander'
+let currentViewerMarkdown = '';
+let isViewerRawMode = false;
+
+const WORKER_COLOR_PALETTE = [
+  { primary: '#06b6d4', light: '#67e8f9', dark: '#0e7490', eye: '#a5f3fc', visor: '#082f49', name: 'Siber Cyan' },
+  { primary: '#8b5cf6', light: '#c4b5fd', dark: '#5b21b6', eye: '#ddd6fe', visor: '#1e1b4b', name: 'Neon Mor' },
+  { primary: '#f59e0b', light: '#fcd34d', dark: '#b45309', eye: '#fef3c7', visor: '#271705', name: 'Kehribar Turuncu' },
+  { primary: '#ec4899', light: '#f9a8d4', dark: '#9d174d', eye: '#fce7f3', visor: '#310a22', name: 'Kreatif Pembe' },
+  { primary: '#3b82f6', light: '#93c5fd', dark: '#1d4ed8', eye: '#dbeafe', visor: '#0f172a', name: 'Elektrik Mavi' },
+  { primary: '#f43f5e', light: '#fda4af', dark: '#be123c', eye: '#ffe4e6', visor: '#2c0814', name: 'Mercan Kırmızı' },
+  { primary: '#eab308', light: '#fde047', dark: '#a16207', eye: '#fef9c3', visor: '#231b05', name: 'Altın Sarısı' },
+  { primary: '#a855f7', light: '#d8b4fe', dark: '#6b21a8', eye: '#f3e8ff', visor: '#240b36', name: 'Kraliyet Eflatun' }
+];
+
+const GM_GREEN_THEME = {
+  primary: '#10b981',
+  light: '#34d399',
+  dark: '#047857',
+  eye: '#6ee7b7',
+  visor: '#022c22',
+  name: 'Zümrüt Yeşili (Genel Müdür)'
+};
+
+function getWorkerTheme(worker, index = 0) {
+  if (!worker || worker.id === 'genel-mudur') {
+    return GM_GREEN_THEME;
+  }
+  if (worker.renk && worker.renk.toLowerCase() !== '#10b981') {
+    const found = WORKER_COLOR_PALETTE.find(p => p.primary.toLowerCase() === worker.renk.toLowerCase());
+    if (found) return found;
+    return {
+      primary: worker.renk,
+      light: worker.renk,
+      dark: '#1e293b',
+      eye: '#ffffff',
+      visor: '#091526',
+      name: 'Özel Renk'
+    };
+  }
+  return WORKER_COLOR_PALETTE[index % WORKER_COLOR_PALETTE.length];
+}
+
+function formatNumber(n) {
+  return Number(n || 0).toLocaleString('tr-TR');
+}
+
+function getStatusLabel(durum) {
+  switch (durum) {
+    case 'dusunuyor': return 'Düşünüyor';
+    case 'calisiyor': return 'Çalışıyor';
+    case 'bitti': return 'Bitti';
+    case 'hata': return 'Hata';
+    default: return 'Boşta';
+  }
+}
+
+function escapeHtml(str) {
+  return String(str || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
+// Sağ üstteki tek buton: Serbest Gezinme <-> İstasyon Düzeni geçişi
+function toggle3DMotionMode() {
+  const btn = document.getElementById('btnToggleMotionMode');
+  if (currentMotionMode === 'station') {
+    currentMotionMode = 'wander';
+    btn.textContent = '📌 İstasyon Düzeni';
+  } else {
+    currentMotionMode = 'station';
+    btn.textContent = '🧭 Serbest Gezinme';
+  }
+  if (window.office3D) {
+    window.office3D.setMotionMode(currentMotionMode);
+  }
+}
+
+function close3DInspector() {
+  document.getElementById('hudInspectorCard').classList.remove('open');
+  if (window.office3D) {
+    window.office3D.clearSelection();
+  }
+}
+
+// Hafif ve güvenli Markdown -> HTML dönüştürücü
+function renderMarkdownToHtml(md) {
+  if (!md) return '<p style="color:var(--text-faint);">İçerik boş.</p>';
+  const lines = String(md).replace(/\r\n/g, '\n').split('\n');
+  let html = '';
+  let inCodeBlock = false;
+  let codeBuffer = [];
+  let inUl = false;
+  let inOl = false;
+  let inTable = false;
+  let tableRows = [];
+
+  function flushLists() {
+    if (inUl) { html += '</ul>'; inUl = false; }
+    if (inOl) { html += '</ol>'; inOl = false; }
+  }
+
+  function flushTable() {
+    if (!inTable) return;
+    inTable = false;
+    if (tableRows.length === 0) return;
+    html += '<table>';
+    tableRows.forEach((row, rIdx) => {
+      const cells = row.split('|').slice(1, -1).map(c => c.trim());
+      if (rIdx === 1 && cells.every(c => /^[-:]+$/.test(c))) return;
+      const tag = rIdx === 0 ? 'th' : 'td';
+      html += '<tr>' + cells.map(c => `<${tag}>${formatInline(c)}</${tag}>`).join('') + '</tr>';
+    });
+    html += '</table>';
+    tableRows = [];
+  }
+
+  function formatInline(text) {
+    let s = escapeHtml(text);
+    s = s.replace(/`([^`]+)`/g, '<code>$1</code>');
+    s = s.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+    s = s.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+    s = s.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+    return s;
+  }
+
+  for (let i = 0; i < lines.length; i++) {
+    const rawLine = lines[i];
+    const trimmed = rawLine.trim();
+
+    if (trimmed.startsWith('```')) {
+      flushLists();
+      flushTable();
+      if (!inCodeBlock) {
+        inCodeBlock = true;
+        codeBuffer = [];
+      } else {
+        inCodeBlock = false;
+        html += `<pre><code>${escapeHtml(codeBuffer.join('\n'))}</code></pre>`;
+      }
+      continue;
+    }
+
+    if (inCodeBlock) {
+      codeBuffer.push(rawLine);
+      continue;
+    }
+
+    if (trimmed.startsWith('|') && trimmed.endsWith('|')) {
+      flushLists();
+      inTable = true;
+      tableRows.push(trimmed);
+      continue;
+    } else if (inTable) {
+      flushTable();
+    }
+
+    if (!trimmed) {
+      flushLists();
+      continue;
+    }
+
+    if (/^---+$/.test(trimmed) || /^\*\*\*+$/.test(trimmed)) {
+      flushLists();
+      html += '<hr>';
+      continue;
+    }
+
+    if (trimmed.startsWith('#### ')) {
+      flushLists();
+      html += `<h4>${formatInline(trimmed.slice(5))}</h4>`;
+    } else if (trimmed.startsWith('### ')) {
+      flushLists();
+      html += `<h3>${formatInline(trimmed.slice(4))}</h3>`;
+    } else if (trimmed.startsWith('## ')) {
+      flushLists();
+      html += `<h2>${formatInline(trimmed.slice(3))}</h2>`;
+    } else if (trimmed.startsWith('# ')) {
+      flushLists();
+      html += `<h1>${formatInline(trimmed.slice(2))}</h1>`;
+    } else if (trimmed.startsWith('> ')) {
+      flushLists();
+      html += `<blockquote>${formatInline(trimmed.slice(2))}</blockquote>`;
+    } else if (/^[-*]\s+/.test(trimmed)) {
+      if (inOl) { html += '</ol>'; inOl = false; }
+      if (!inUl) { html += '<ul>'; inUl = true; }
+      html += `<li>${formatInline(trimmed.replace(/^[-*]\s+/, ''))}</li>`;
+    } else if (/^\d+\.\s+/.test(trimmed)) {
+      if (inUl) { html += '</ul>'; inUl = false; }
+      if (!inOl) { html += '<ol>'; inOl = true; }
+      html += `<li>${formatInline(trimmed.replace(/^\d+\.\s+/, ''))}</li>`;
+    } else {
+      flushLists();
+      html += `<p>${formatInline(trimmed)}</p>`;
+    }
+  }
+
+  flushLists();
+  flushTable();
+  if (inCodeBlock) {
+    html += `<pre><code>${escapeHtml(codeBuffer.join('\n'))}</code></pre>`;
+  }
+  return html;
+}
+
+function openMarkdownViewer({ baslik, yol, icerik }) {
+  currentViewerMarkdown = icerik || '';
+  isViewerRawMode = false;
+  document.getElementById('viewerTitle').textContent = baslik || 'Rapor';
+  document.getElementById('viewerPath').textContent = yol || '';
+  document.getElementById('viewerRendered').innerHTML = renderMarkdownToHtml(currentViewerMarkdown);
+  document.getElementById('viewerRaw').textContent = currentViewerMarkdown;
+  document.getElementById('viewerRendered').style.display = 'block';
+  document.getElementById('viewerRaw').style.display = 'none';
+  document.getElementById('btnToggleRaw').textContent = '📝 Ham .md';
+  openModal('modalMdViewer');
+}
+
+function toggleViewerRaw() {
+  isViewerRawMode = !isViewerRawMode;
+  document.getElementById('viewerRendered').style.display = isViewerRawMode ? 'none' : 'block';
+  document.getElementById('viewerRaw').style.display = isViewerRawMode ? 'block' : 'none';
+  document.getElementById('btnToggleRaw').textContent = isViewerRawMode ? '📖 Görsel Görünüm' : '📝 Ham .md';
+}
+
+function copyViewerMarkdown() {
+  navigator.clipboard.writeText(currentViewerMarkdown);
+}
+
+function renderAll() {
+  const cfg = appState.config || {};
+  const tok = appState.toplamToken || {};
+  const totalTok = (tok.input || 0) + (tok.output || 0) + (tok.cacheRead || 0);
+  document.getElementById('tokTotal').textContent = formatNumber(totalTok);
+
+  const allWorkers = cfg.calisanlar || [];
+  let activeCount = 0;
+  for (const w of allWorkers) {
+    const st = appState.durumlar[w.id] || { durum: 'bosta' };
+    if (st.durum === 'dusunuyor' || st.durum === 'calisiyor') activeCount++;
+  }
+
+  document.getElementById('hudActiveBadge').textContent = `${activeCount} Aktif`;
+
+  if (window.office3D) {
+    window.office3D.syncWithState(appState);
+  }
+}
+
+async function submitTaskForm(e) {
+  e.preventDefault();
+  const inp = document.getElementById('inputPrompt');
+  const metin = inp.value.trim();
+  if (!metin) return;
+  inp.value = '';
+
+  await fetch('/api/gorev', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ metin })
+  });
+}
+
+async function inspectMd(workerId) {
+  const res = await fetch(`/api/calisan-md?id=${encodeURIComponent(workerId)}`);
+  const data = await res.json();
+  openMarkdownViewer({
+    baslik: `${data.rol || workerId} — GEMINI.md`,
+    yol: `${data.klasor}/GEMINI.md`,
+    icerik: data.icerik || ''
+  });
+}
+
+async function submitAddWorker(e) {
+  e.preventDefault();
+  const rol = document.getElementById('wRol').value.trim();
+  const ekipAdi = document.getElementById('wEkipAdi').value.trim();
+  const klasor = document.getElementById('wKlasor').value.trim();
+  const aciklama = document.getElementById('wAciklama').value.trim();
+  const renk = document.getElementById('wRenk').value;
+
+  const res = await fetch('/api/calisan', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ rol, ekipAdi, klasor, aciklama, renk })
+  });
+  const data = await res.json();
+  if (data.basarili) {
+    closeModal('modalAddWorker');
+    document.getElementById('wRol').value = '';
+    document.getElementById('wKlasor').value = '';
+    document.getElementById('wAciklama').value = '';
+  } else {
+    alert(data.hata || 'Hata oluştu');
+  }
+}
+
+function openModal(id) {
+  document.getElementById(id).classList.add('open');
+}
+
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+}
+
+function appendLogEntry(log) {
+  const list3D = document.getElementById('hudLiveLogList');
+  if (list3D) {
+    const item = document.createElement('div');
+    item.className = `log-item ${log.tip || ''}`;
+    item.innerHTML = `<span class="l-time">${log.zaman}</span><span>${escapeHtml(log.mesaj)}</span>`;
+    list3D.prepend(item);
+  }
+}
+
+function connectSSE() {
+  const es = new EventSource('/api/akis');
+  es.addEventListener('ilk_durum', ev => {
+    appState = JSON.parse(ev.data);
+    renderAll();
+  });
+  es.addEventListener('calisan_durum', ev => {
+    const st = JSON.parse(ev.data);
+    appState.durumlar[st.id] = st;
+    renderAll();
+  });
+  es.addEventListener('canli_log', ev => {
+    const log = JSON.parse(ev.data);
+    appendLogEntry(log);
+  });
+  es.addEventListener('gorev_yeni', ev => {
+    const g = JSON.parse(ev.data);
+    appState.gorevler = [g, ...(appState.gorevler || []).filter(x => x.id !== g.id)];
+  });
+  es.addEventListener('gorev_guncelle', ev => {
+    const g = JSON.parse(ev.data);
+    const idx = (appState.gorevler || []).findIndex(x => x.id === g.id);
+    if (idx >= 0) appState.gorevler[idx] = g;
+    else appState.gorevler.unshift(g);
+  });
+  es.addEventListener('raporlar_guncelle', ev => {
+    appState.raporlar = JSON.parse(ev.data);
+  });
+  es.addEventListener('token_guncelle', ev => {
+    appState.toplamToken = JSON.parse(ev.data);
+    renderAll();
+  });
+  es.onerror = () => {
+    document.getElementById('sseDot').style.background = 'var(--red)';
+  };
+  es.onopen = () => {
+    document.getElementById('sseDot').style.background = 'var(--emerald)';
+  };
+}
+
+connectSSE();
+</script>
+
+<!-- ==================== THREE.JS 3D MASKOT MOTORU ==================== -->
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+class Office3DEngine {
+  constructor() {
+    this.container = document.getElementById('threeCanvasContainer');
+    this.labelsLayer = document.getElementById('labels3DLayer');
+    this.motionMode = 'station'; // 'station' | 'wander'
+    this.selectedWorkerId = null;
+
+    this.scene = null;
+    this.camera = null;
+    this.renderer = null;
+    this.controls = null;
+    this.raycaster = new THREE.Raycaster();
+    this.mouseNDC = new THREE.Vector2();
+    this.pointerNDC = new THREE.Vector2(0, 0);
+
+    this.mascots = new Map();
+    this.energyLinks = new Map();
+
+    this.clock = new THREE.Clock();
+    this.cameraTargetPos = null;
+    this.cameraTargetLook = null;
+
+    this.initScene();
+    this.bindEvents();
+    this.animate();
+  }
+
+  initScene() {
+    this.scene = new THREE.Scene();
+    this.scene.background = new THREE.Color(0x0b1017);
+    this.scene.fog = new THREE.FogExp2(0x0b1017, 0.022);
+
+    const w = this.container.clientWidth || window.innerWidth - 40;
+    const h = this.container.clientHeight || window.innerHeight - 140;
+
+    this.camera = new THREE.PerspectiveCamera(45, w / h, 0.1, 200);
+    this.camera.position.set(0, 8.8, 16.5);
+
+    this.renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
+    this.renderer.setSize(w, h);
+    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    this.renderer.shadowMap.enabled = true;
+    this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    this.renderer.toneMappingExposure = 1.15;
+    this.container.appendChild(this.renderer.domElement);
+
+    this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+    this.controls.enableDamping = true;
+    this.controls.dampingFactor = 0.06;
+    this.controls.maxPolarAngle = Math.PI / 2 - 0.04;
+    this.controls.minDistance = 4;
+    this.controls.maxDistance = 38;
+    this.controls.target.set(0, 2.0, 0);
+
+    const ambient = new THREE.AmbientLight(0xdbeafe, 0.85);
+    this.scene.add(ambient);
+
+    const hemi = new THREE.HemisphereLight(0x6ee7b7, 0x0f172a, 0.9);
+    hemi.position.set(0, 20, 0);
+    this.scene.add(hemi);
+
+    const dirLight = new THREE.DirectionalLight(0xffffff, 1.4);
+    dirLight.position.set(10, 18, 12);
+    dirLight.castShadow = true;
+    dirLight.shadow.mapSize.width = 2048;
+    dirLight.shadow.mapSize.height = 2048;
+    dirLight.shadow.camera.near = 1;
+    dirLight.shadow.camera.far = 50;
+    const d = 18;
+    dirLight.shadow.camera.left = -d;
+    dirLight.shadow.camera.right = d;
+    dirLight.shadow.camera.top = d;
+    dirLight.shadow.camera.bottom = -d;
+    this.scene.add(dirLight);
+
+    this.buildOfficeEnvironment();
+  }
+
+  buildOfficeEnvironment() {
+    const floorGeo = new THREE.CylinderGeometry(26, 26, 0.3, 64);
+    const floorMat = new THREE.MeshStandardMaterial({
+      color: 0x0f1722,
+      roughness: 0.65,
+      metalness: 0.25
+    });
+    const floor = new THREE.Mesh(floorGeo, floorMat);
+    floor.position.y = -0.15;
+    floor.receiveShadow = true;
+    this.scene.add(floor);
+
+    const grid = new THREE.GridHelper(44, 44, 0x10b981, 0x1e293b);
+    grid.position.y = 0.01;
+    grid.material.opacity = 0.35;
+    grid.material.transparent = true;
+    this.scene.add(grid);
+
+    const gmBaseGroup = new THREE.Group();
+    const podiumGeo = new THREE.CylinderGeometry(2.55, 2.85, 0.28, 48);
+    const podiumMat = new THREE.MeshStandardMaterial({
+      color: 0x064e3b,
+      emissive: 0x10b981,
+      emissiveIntensity: 0.22,
+      roughness: 0.3,
+      metalness: 0.6
+    });
+    const podium = new THREE.Mesh(podiumGeo, podiumMat);
+    podium.position.y = 0.14;
+    podium.receiveShadow = true;
+    gmBaseGroup.add(podium);
+
+    const holoRingGeo = new THREE.RingGeometry(2.65, 2.82, 64);
+    const holoRingMat = new THREE.MeshBasicMaterial({
+      color: 0x34d399,
+      side: THREE.DoubleSide,
+      transparent: true,
+      opacity: 0.75
+    });
+    const holoRing = new THREE.Mesh(holoRingGeo, holoRingMat);
+    holoRing.rotation.x = -Math.PI / 2;
+    holoRing.position.y = 0.29;
+    gmBaseGroup.add(holoRing);
+
+    const outerOrbitGeo = new THREE.RingGeometry(6.95, 7.05, 96);
+    const outerOrbitMat = new THREE.MeshBasicMaterial({
+      color: 0x10b981,
+      side: THREE.DoubleSide,
+      transparent: true,
+      opacity: 0.22
+    });
+    const outerOrbit = new THREE.Mesh(outerOrbitGeo, outerOrbitMat);
+    outerOrbit.rotation.x = -Math.PI / 2;
+    outerOrbit.position.y = 0.03;
+    gmBaseGroup.add(outerOrbit);
+
+    this.scene.add(gmBaseGroup);
+
+    const pCount = 90;
+    const pGeo = new THREE.BufferGeometry();
+    const pPositions = new Float32Array(pCount * 3);
+    for (let i = 0; i < pCount; i++) {
+      pPositions[i * 3] = (Math.random() - 0.5) * 32;
+      pPositions[i * 3 + 1] = 0.8 + Math.random() * 9;
+      pPositions[i * 3 + 2] = (Math.random() - 0.5) * 26;
+    }
+    pGeo.setAttribute('position', new THREE.BufferAttribute(pPositions, 3));
+    const pMat = new THREE.PointsMaterial({
+      color: 0x34d399,
+      size: 0.12,
+      transparent: true,
+      opacity: 0.45
+    });
+    this.ambientParticles = new THREE.Points(pGeo, pMat);
+    this.scene.add(this.ambientParticles);
+  }
+
+  createMascot3D(worker, isGM, theme, stationPos) {
+    // Genel Müdür = 1.0 (Tam Boyut, Yeşil), Diğer Çalışanlar = 0.5 (Yarı Yarıya Küçük, Farklı Renkler)
+    const scaleFactor = isGM ? 1.0 : 0.5;
+
+    const root = new THREE.Group();
+    root.position.copy(stationPos);
+
+    const padRadius = isGM ? 2.4 : 1.35;
+    const padGeo = new THREE.CylinderGeometry(padRadius, padRadius * 1.1, 0.12, 36);
+    const padMat = new THREE.MeshStandardMaterial({
+      color: new THREE.Color(theme.dark),
+      emissive: new THREE.Color(theme.primary),
+      emissiveIntensity: 0.3,
+      roughness: 0.35,
+      metalness: 0.5
+    });
+    const padMesh = new THREE.Mesh(padGeo, padMat);
+    padMesh.position.y = 0.06;
+    padMesh.receiveShadow = true;
+    root.add(padMesh);
+
+    const padGlowGeo = new THREE.RingGeometry(padRadius * 1.02, padRadius * 1.14, 48);
+    const padGlowMat = new THREE.MeshBasicMaterial({
+      color: new THREE.Color(theme.light),
+      side: THREE.DoubleSide,
+      transparent: true,
+      opacity: 0.7
+    });
+    const padGlow = new THREE.Mesh(padGlowGeo, padGlowMat);
+    padGlow.rotation.x = -Math.PI / 2;
+    padGlow.position.y = 0.13;
+    root.add(padGlow);
+
+    const floatGroup = new THREE.Group();
+    const baseHoverY = isGM ? 2.75 : 1.55;
+    floatGroup.position.y = baseHoverY;
+    floatGroup.scale.setScalar(scaleFactor);
+    root.add(floatGroup);
+
+    const bodyRadius = 1.35;
+    const bodyGeo = new THREE.SphereGeometry(bodyRadius, 48, 48);
+    const bodyMat = new THREE.MeshStandardMaterial({
+      color: new THREE.Color(theme.primary),
+      emissive: new THREE.Color(theme.dark),
+      emissiveIntensity: 0.38,
+      roughness: 0.22,
+      metalness: 0.32
+    });
+    const bodyMesh = new THREE.Mesh(bodyGeo, bodyMat);
+    bodyMesh.castShadow = true;
+    bodyMesh.userData.workerId = worker.id;
+    floatGroup.add(bodyMesh);
+
+    const faceCanvas = document.createElement('canvas');
+    faceCanvas.width = 512;
+    faceCanvas.height = 256;
+    const faceCtx = faceCanvas.getContext('2d');
+    const faceTexture = new THREE.CanvasTexture(faceCanvas);
+    faceTexture.colorSpace = THREE.SRGBColorSpace;
+
+    const visorGeo = new THREE.SphereGeometry(
+      bodyRadius * 1.018,
+      40,
+      28,
+      Math.PI * 0.22,
+      Math.PI * 0.56,
+      Math.PI * 0.30,
+      Math.PI * 0.40
+    );
+    const visorMat = new THREE.MeshBasicMaterial({
+      map: faceTexture,
+      transparent: true
+    });
+    const visorMesh = new THREE.Mesh(visorGeo, visorMat);
+    visorMesh.rotation.y = 0;
+    visorMesh.userData.workerId = worker.id;
+    floatGroup.add(visorMesh);
+
+    const coreGeo = new THREE.SphereGeometry(0.14, 20, 20);
+    const coreMat = new THREE.MeshBasicMaterial({
+      color: new THREE.Color(theme.eye)
+    });
+    const coreMesh = new THREE.Mesh(coreGeo, coreMat);
+    coreMesh.position.set(0, -0.78, bodyRadius * 0.78);
+    floatGroup.add(coreMesh);
+
+    const earGeo = new THREE.CapsuleGeometry(0.16, 0.42, 12, 16);
+    const earMat = new THREE.MeshStandardMaterial({
+      color: new THREE.Color(theme.light),
+      emissive: new THREE.Color(theme.primary),
+      emissiveIntensity: 0.45,
+      roughness: 0.25,
+      metalness: 0.5
+    });
+    const leftEar = new THREE.Mesh(earGeo, earMat);
+    leftEar.position.set(-bodyRadius - 0.08, 0.05, 0);
+    floatGroup.add(leftEar);
+
+    const rightEar = new THREE.Mesh(earGeo, earMat);
+    rightEar.position.set(bodyRadius + 0.08, 0.05, 0);
+    floatGroup.add(rightEar);
+
+    const handGeo = new THREE.CapsuleGeometry(0.19, 0.38, 12, 16);
+    const handMat = new THREE.MeshStandardMaterial({
+      color: new THREE.Color(theme.primary),
+      emissive: new THREE.Color(theme.light),
+      emissiveIntensity: 0.3,
+      roughness: 0.25,
+      metalness: 0.4
+    });
+    const leftHand = new THREE.Mesh(handGeo, handMat);
+    leftHand.position.set(-bodyRadius - 0.52, -0.15, 0.25);
+    leftHand.castShadow = true;
+    floatGroup.add(leftHand);
+
+    const rightHand = new THREE.Mesh(handGeo, handMat);
+    rightHand.position.set(bodyRadius + 0.52, -0.15, 0.25);
+    rightHand.castShadow = true;
+    floatGroup.add(rightHand);
+
+    const antennaGroup = new THREE.Group();
+    const stemGeo = new THREE.CylinderGeometry(0.05, 0.07, 0.55, 16);
+    const stemMat = new THREE.MeshStandardMaterial({
+      color: new THREE.Color(theme.light),
+      metalness: 0.6,
+      roughness: 0.2
+    });
+    const stemMesh = new THREE.Mesh(stemGeo, stemMat);
+    stemMesh.position.y = bodyRadius + 0.25;
+    antennaGroup.add(stemMesh);
+
+    const bulbGeo = new THREE.SphereGeometry(0.19, 24, 24);
+    const bulbMat = new THREE.MeshBasicMaterial({
+      color: new THREE.Color(theme.eye)
+    });
+    const bulbMesh = new THREE.Mesh(bulbGeo, bulbMat);
+    bulbMesh.position.y = bodyRadius + 0.58;
+    antennaGroup.add(bulbMesh);
+
+    if (isGM) {
+      const crownRingGeo = new THREE.TorusGeometry(0.42, 0.035, 16, 48);
+      const crownRingMat = new THREE.MeshBasicMaterial({ color: 0x6ee7b7 });
+      const crownRing = new THREE.Mesh(crownRingGeo, crownRingMat);
+      crownRing.rotation.x = Math.PI / 2;
+      crownRing.position.y = bodyRadius + 0.58;
+      antennaGroup.add(crownRing);
+    }
+    floatGroup.add(antennaGroup);
+
+    const ring1Geo = new THREE.TorusGeometry(bodyRadius * 1.42, 0.032, 16, 72);
+    const ring1Mat = new THREE.MeshBasicMaterial({
+      color: new THREE.Color(theme.light),
+      transparent: true,
+      opacity: 0.78
+    });
+    const orbitalRing1 = new THREE.Mesh(ring1Geo, ring1Mat);
+    orbitalRing1.rotation.x = Math.PI / 2 - 0.32;
+    orbitalRing1.rotation.y = -0.25;
+    floatGroup.add(orbitalRing1);
+
+    const ring2Geo = new THREE.TorusGeometry(bodyRadius * 1.28, 0.024, 16, 72);
+    const ring2Mat = new THREE.MeshBasicMaterial({
+      color: new THREE.Color(theme.eye),
+      transparent: true,
+      opacity: 0.5
+    });
+    const orbitalRing2 = new THREE.Mesh(ring2Geo, ring2Mat);
+    orbitalRing2.rotation.x = Math.PI / 2 + 0.36;
+    orbitalRing2.rotation.y = 0.32;
+    floatGroup.add(orbitalRing2);
+
+    const thrusterGroup = new THREE.Group();
+    const plume1 = new THREE.Mesh(
+      new THREE.RingGeometry(0.25, 0.65, 32),
+      new THREE.MeshBasicMaterial({ color: new THREE.Color(theme.primary), side: THREE.DoubleSide, transparent: true, opacity: 0.55 })
+    );
+    plume1.rotation.x = -Math.PI / 2;
+    plume1.position.y = -bodyRadius - 0.25;
+    thrusterGroup.add(plume1);
+
+    const plume2 = new THREE.Mesh(
+      new THREE.RingGeometry(0.12, 0.42, 32),
+      new THREE.MeshBasicMaterial({ color: new THREE.Color(theme.eye), side: THREE.DoubleSide, transparent: true, opacity: 0.75 })
+    );
+    plume2.rotation.x = -Math.PI / 2;
+    plume2.position.y = -bodyRadius - 0.45;
+    thrusterGroup.add(plume2);
+
+    const plume3 = new THREE.Mesh(
+      new THREE.CircleGeometry(0.2, 24),
+      new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide, transparent: true, opacity: 0.85 })
+    );
+    plume3.rotation.x = -Math.PI / 2;
+    plume3.position.y = -bodyRadius - 0.62;
+    thrusterGroup.add(plume3);
+    floatGroup.add(thrusterGroup);
+
+    const labelEl = document.createElement('div');
+    labelEl.className = 'mascot-3d-label';
+    labelEl.style.setProperty('--m-color', theme.primary);
+    labelEl.style.setProperty('--m-glow', `${theme.primary}66`);
+    labelEl.onclick = (e) => {
+      e.stopPropagation();
+      this.focusOnWorker(worker.id);
+    };
+    this.labelsLayer.appendChild(labelEl);
+
+    const mascotObj = {
+      id: worker.id,
+      worker,
+      isGM,
+      scaleFactor,
+      theme,
+      root,
+      floatGroup,
+      baseHoverY,
+      bodyMesh,
+      visorMesh,
+      leftHand,
+      rightHand,
+      antennaGroup,
+      bulbMesh,
+      orbitalRing1,
+      orbitalRing2,
+      thrusterGroup,
+      padGlow,
+      faceCanvas,
+      faceCtx,
+      faceTexture,
+      labelEl,
+      stationPos: stationPos.clone(),
+      wanderTarget: stationPos.clone(),
+      wanderPauseUntil: 0,
+      phaseOffset: Math.random() * Math.PI * 2,
+      blinkState: false,
+      nextBlinkAt: performance.now() + 2000 + Math.random() * 2500,
+      durum: 'bosta',
+      eylem: 'Hazır'
+    };
+
+    this.drawMascotFace(mascotObj, 0);
+    this.updateMascotLabelDOM(mascotObj);
+    this.scene.add(root);
+
+    return mascotObj;
+  }
+
+  drawMascotFace(m, elapsed) {
+    const ctx = m.faceCtx;
+    const w = m.faceCanvas.width;
+    const h = m.faceCanvas.height;
+    ctx.clearRect(0, 0, w, h);
+
+    const vx = 36, vy = 26, vw = w - 72, vh = h - 52, vr = 74;
+    const grad = ctx.createRadialGradient(w * 0.5, h * 0.45, 10, w * 0.5, h * 0.5, vw * 0.55);
+    grad.addColorStop(0, m.theme.visor || '#042f2e');
+    grad.addColorStop(0.85, '#050b14');
+    grad.addColorStop(1, m.theme.primary);
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.roundRect(vx, vy, vw, vh, vr);
+    ctx.fillStyle = grad;
+    ctx.fill();
+    ctx.lineWidth = 7;
+    ctx.strokeStyle = m.theme.light;
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(vx + 55, vy + 26);
+    ctx.quadraticCurveTo(w * 0.46, vy + 12, w * 0.65, vy + 26);
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.24)';
+    ctx.lineWidth = 6;
+    ctx.lineCap = 'round';
+    ctx.stroke();
+
+    const eyeShiftX = this.pointerNDC.x * 14;
+    const eyeShiftY = -this.pointerNDC.y * 8;
+    const leftEyeX = w * 0.36 + eyeShiftX;
+    const rightEyeX = w * 0.64 + eyeShiftX;
+    const eyeY = h * 0.46 + eyeShiftY;
+
+    ctx.shadowColor = m.theme.eye;
+    ctx.shadowBlur = 16;
+    ctx.fillStyle = m.theme.eye;
+    ctx.strokeStyle = m.theme.eye;
+
+    const durum = m.durum || 'bosta';
+
+    if (durum === 'dusunuyor') {
+      for (const ex of [leftEyeX, rightEyeX]) {
+        ctx.save();
+        ctx.translate(ex, eyeY);
+        ctx.rotate(elapsed * 4.2);
+        ctx.beginPath();
+        ctx.setLineDash([14, 10]);
+        ctx.arc(0, 0, 24, 0, Math.PI * 2);
+        ctx.lineWidth = 7;
+        ctx.stroke();
+        ctx.restore();
+
+        ctx.beginPath();
+        ctx.fillStyle = '#ffffff';
+        ctx.arc(ex, eyeY, 8, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    } else if (durum === 'bitti') {
+      ctx.lineWidth = 10;
+      ctx.lineCap = 'round';
+      for (const ex of [leftEyeX, rightEyeX]) {
+        ctx.beginPath();
+        ctx.moveTo(ex - 24, eyeY + 10);
+        ctx.quadraticCurveTo(ex, eyeY - 22, ex + 24, eyeY + 10);
+        ctx.stroke();
+      }
+    } else if (durum === 'hata') {
+      ctx.lineWidth = 8;
+      for (const ex of [leftEyeX, rightEyeX]) {
+        ctx.beginPath();
+        ctx.arc(ex, eyeY, 24, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.fillStyle = '#ffffff';
+        ctx.arc(ex, eyeY, 8, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    } else {
+      const ry = m.blinkState ? 3.5 : 27;
+      for (const ex of [leftEyeX, rightEyeX]) {
+        ctx.beginPath();
+        ctx.fillStyle = m.theme.eye;
+        ctx.ellipse(ex, eyeY, 20, ry, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        if (!m.blinkState) {
+          ctx.beginPath();
+          ctx.fillStyle = '#ffffff';
+          ctx.arc(ex - 6, eyeY - 9, 6.5, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+    }
+
+    const mouthY = h * 0.72 + eyeShiftY * 0.6;
+    const centerX = w * 0.5 + eyeShiftX * 0.7;
+
+    if (durum === 'calisiyor') {
+      const barCount = 5;
+      const barW = 10;
+      const gap = 8;
+      const totalW = barCount * barW + (barCount - 1) * gap;
+      let startX = centerX - totalW / 2;
+      ctx.fillStyle = m.theme.eye;
+      for (let i = 0; i < barCount; i++) {
+        const bh = 10 + Math.abs(Math.sin(elapsed * 9 + i * 1.3)) * 22;
+        ctx.beginPath();
+        ctx.roundRect(startX + i * (barW + gap), mouthY - bh / 2, barW, bh, 5);
+        ctx.fill();
+      }
+    } else if (durum === 'dusunuyor') {
+      ctx.beginPath();
+      ctx.lineWidth = 7;
+      ctx.lineCap = 'round';
+      ctx.moveTo(centerX - 24, mouthY);
+      ctx.quadraticCurveTo(centerX, mouthY - 8 * Math.sin(elapsed * 5), centerX + 24, mouthY);
+      ctx.stroke();
+    } else {
+      ctx.beginPath();
+      ctx.lineWidth = 8;
+      ctx.lineCap = 'round';
+      const smileDepth = durum === 'bitti' ? 22 : 14;
+      ctx.moveTo(centerX - 28, mouthY - 4);
+      ctx.quadraticCurveTo(centerX, mouthY + smileDepth, centerX + 28, mouthY - 4);
+      ctx.stroke();
+    }
+
+    ctx.restore();
+    m.faceTexture.needsUpdate = true;
+  }
+
+  updateMascotLabelDOM(m) {
+    const isBusy = m.durum === 'dusunuyor' || m.durum === 'calisiyor';
+    const showBubble = isBusy || m.durum === 'bitti' || m.durum === 'hata' || this.selectedWorkerId === m.id;
+    const scaleText = m.isGM ? '👑 %100' : '🤖 %50';
+
+    m.labelEl.innerHTML = `
+      ${showBubble ? `<div class="mascot-3d-bubble">${escapeHtml(m.eylem || 'Hazır')}</div>` : ''}
+      <div class="mascot-3d-nametag ${m.isGM ? 'is-gm' : ''}">
+        <span style="width:9px;height:9px;border-radius:50%;background:${m.theme.primary};box-shadow:0 0 8px ${m.theme.primary};display:inline-block;"></span>
+        <span>${escapeHtml(m.worker.rol)}</span>
+        <span class="mascot-3d-scale-pill">${scaleText}</span>
+        <span class="status-badge status-${m.durum}" style="padding:1px 6px;font-size:10px;">${getStatusLabel(m.durum)}</span>
+      </div>
+    `;
+  }
+
+  createOrUpdateEnergyLink(workerId, targetPos, theme, isActive) {
+    let link = this.energyLinks.get(workerId);
+    if (!link) {
+      const curve = new THREE.QuadraticBezierCurve3(
+        new THREE.Vector3(0, 0.18, 0),
+        new THREE.Vector3(targetPos.x * 0.5, 0.18, targetPos.z * 0.5),
+        new THREE.Vector3(targetPos.x, 0.18, targetPos.z)
+      );
+      const points = curve.getPoints(32);
+      const lineGeo = new THREE.BufferGeometry().setFromPoints(points);
+      const lineMat = new THREE.LineBasicMaterial({
+        color: new THREE.Color(theme.primary),
+        transparent: true,
+        opacity: 0.25
+      });
+      const line = new THREE.Line(lineGeo, lineMat);
+      this.scene.add(line);
+
+      const packetGeo = new THREE.SphereGeometry(0.18, 16, 16);
+      const packetMat = new THREE.MeshBasicMaterial({
+        color: new THREE.Color(theme.light)
+      });
+      const packet = new THREE.Mesh(packetGeo, packetMat);
+      packet.visible = false;
+      this.scene.add(packet);
+
+      link = { line, packet, curve, isActive: false, progress: Math.random() };
+      this.energyLinks.set(workerId, link);
+    }
+
+    link.curve.v0.set(0, isActive ? 2.4 : 0.18, 0);
+    link.curve.v1.set(targetPos.x * 0.5, isActive ? 3.8 : 0.18, targetPos.z * 0.5);
+    link.curve.v2.set(targetPos.x, isActive ? 1.5 : 0.18, targetPos.z);
+    link.line.geometry.setFromPoints(link.curve.getPoints(32));
+    link.line.material.opacity = isActive ? 0.85 : 0.22;
+    link.isActive = isActive;
+    link.packet.visible = isActive;
+  }
+
+  syncWithState(state) {
+    const calisanlar = (state.config && state.config.calisanlar) || [];
+    const durumlar = state.durumlar || {};
+
+    const currentIds = new Set(calisanlar.map(c => c.id));
+    for (const [id, m] of this.mascots.entries()) {
+      if (!currentIds.has(id)) {
+        this.scene.remove(m.root);
+        m.labelEl.remove();
+        this.mascots.delete(id);
+      }
+    }
+
+    const otherWorkers = calisanlar.filter(c => c.id !== 'genel-mudur');
+    const orbitRadius = 7.0;
+
+    let nonGmIdx = 0;
+    for (const w of calisanlar) {
+      const isGM = w.id === 'genel-mudur';
+      const theme = isGM ? GM_GREEN_THEME : getWorkerTheme(w, nonGmIdx);
+
+      let stationPos = new THREE.Vector3(0, 0, 0);
+      if (!isGM) {
+        const totalOthers = Math.max(1, otherWorkers.length);
+        const angleSpan = Math.min(Math.PI * 1.5, Math.max(Math.PI * 0.8, (totalOthers - 1) * 0.65));
+        const startAngle = -angleSpan / 2;
+        const angle = totalOthers === 1 ? 0 : startAngle + (nonGmIdx / (totalOthers - 1)) * angleSpan;
+        stationPos.set(
+          Math.sin(angle) * orbitRadius,
+          0,
+          Math.cos(angle) * orbitRadius * 0.85
+        );
+        nonGmIdx++;
+      }
+
+      let m = this.mascots.get(w.id);
+      if (!m) {
+        m = this.createMascot3D(w, isGM, theme, stationPos);
+        this.mascots.set(w.id, m);
+      } else {
+        m.worker = w;
+        m.stationPos.copy(stationPos);
+      }
+
+      const st = durumlar[w.id] || { durum: 'bosta', eylem: 'Hazır' };
+      const prevDurum = m.durum;
+      const prevEylem = m.eylem;
+      m.durum = st.durum || 'bosta';
+      m.eylem = st.eylem || 'Hazır';
+
+      if (prevDurum !== m.durum || prevEylem !== m.eylem) {
+        this.drawMascotFace(m, this.clock.getElapsedTime());
+        this.updateMascotLabelDOM(m);
+      }
+
+      if (!isGM) {
+        const gmState = durumlar['genel-mudur'] || {};
+        const isLinkActive =
+          m.durum === 'dusunuyor' ||
+          m.durum === 'calisiyor' ||
+          gmState.durum === 'dusunuyor';
+        this.createOrUpdateEnergyLink(w.id, m.root.position, theme, isLinkActive);
+      }
+    }
+
+    if (this.selectedWorkerId && this.mascots.has(this.selectedWorkerId)) {
+      this.updateInspectorCard(this.mascots.get(this.selectedWorkerId));
+    }
+  }
+
+  setMotionMode(mode) {
+    this.motionMode = mode;
+  }
+
+  resetCamera() {
+    this.cameraTargetPos = new THREE.Vector3(0, 8.8, 16.5);
+    this.cameraTargetLook = new THREE.Vector3(0, 2.0, 0);
+  }
+
+  clearSelection() {
+    this.selectedWorkerId = null;
+    for (const m of this.mascots.values()) {
+      this.updateMascotLabelDOM(m);
+    }
+    this.resetCamera();
+  }
+
+  focusOnWorker(workerId) {
+    const m = this.mascots.get(workerId);
+    if (!m) return;
+    this.selectedWorkerId = workerId;
+    for (const item of this.mascots.values()) {
+      this.updateMascotLabelDOM(item);
+    }
+
+    const pos = m.root.position;
+    const dist = m.isGM ? 7.2 : 4.8;
+    const height = m.isGM ? 4.2 : 2.6;
+    this.cameraTargetPos = new THREE.Vector3(pos.x, pos.y + height, pos.z + dist);
+    this.cameraTargetLook = new THREE.Vector3(pos.x, pos.y + (m.isGM ? 2.5 : 1.4), pos.z);
+
+    this.updateInspectorCard(m);
+  }
+
+  updateInspectorCard(m) {
+    const card = document.getElementById('hudInspectorCard');
+    card.classList.add('open');
+    document.getElementById('inspColorDot').style.background = m.theme.primary;
+    document.getElementById('inspColorDot').style.boxShadow = `0 0 10px ${m.theme.primary}`;
+    document.getElementById('inspRoleName').textContent = m.worker.rol;
+    document.getElementById('inspScaleBadge').textContent = m.isGM ? '👑 %100 Boyut' : '🤖 %50 Boyut';
+    document.getElementById('inspDesc').textContent = m.worker.aciklama || '';
+    document.getElementById('inspAction').textContent = `${getStatusLabel(m.durum)}: ${m.eylem || 'Hazır'}`;
+    document.getElementById('inspFolder').textContent = `📁 ${m.worker.klasor}`;
+    document.getElementById('inspBtnMd').onclick = () => inspectMd(m.id);
+  }
+
+  handleResize() {
+    if (!this.container || !this.renderer || !this.camera) return;
+    const w = this.container.clientWidth;
+    const h = this.container.clientHeight;
+    if (w > 0 && h > 0) {
+      this.camera.aspect = w / h;
+      this.camera.updateProjectionMatrix();
+      this.renderer.setSize(w, h);
+    }
+  }
+
+  bindEvents() {
+    window.addEventListener('resize', () => this.handleResize());
+
+    this.renderer.domElement.addEventListener('pointermove', (e) => {
+      const rect = this.renderer.domElement.getBoundingClientRect();
+      this.pointerNDC.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+      this.pointerNDC.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+    });
+
+    let downPos = { x: 0, y: 0 };
+    this.renderer.domElement.addEventListener('pointerdown', (e) => {
+      downPos = { x: e.clientX, y: e.clientY };
+      this.cameraTargetPos = null;
+      this.cameraTargetLook = null;
+    });
+
+    this.renderer.domElement.addEventListener('pointerup', (e) => {
+      if (Math.hypot(e.clientX - downPos.x, e.clientY - downPos.y) > 6) return;
+      const rect = this.renderer.domElement.getBoundingClientRect();
+      this.mouseNDC.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+      this.mouseNDC.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+
+      this.raycaster.setFromCamera(this.mouseNDC, this.camera);
+      const meshes = [];
+      for (const m of this.mascots.values()) {
+        meshes.push(m.bodyMesh, m.visorMesh);
+      }
+      const hits = this.raycaster.intersectObjects(meshes, false);
+      if (hits.length > 0 && hits[0].object.userData.workerId) {
+        this.focusOnWorker(hits[0].object.userData.workerId);
+      }
+    });
+  }
+
+  animate() {
+    requestAnimationFrame(() => this.animate());
+
+    const elapsed = this.clock.getElapsedTime();
+    const now = performance.now();
+
+    if (this.cameraTargetPos && this.cameraTargetLook) {
+      this.camera.position.lerp(this.cameraTargetPos, 0.07);
+      this.controls.target.lerp(this.cameraTargetLook, 0.07);
+      if (this.camera.position.distanceTo(this.cameraTargetPos) < 0.08) {
+        this.cameraTargetPos = null;
+        this.cameraTargetLook = null;
+      }
+    }
+
+    this.controls.update();
+
+    if (this.ambientParticles) {
+      this.ambientParticles.rotation.y = elapsed * 0.04;
+    }
+
+    const canvasW = this.container.clientWidth;
+    const canvasH = this.container.clientHeight;
+
+    for (const m of this.mascots.values()) {
+      const isBusy = m.durum === 'dusunuyor' || m.durum === 'calisiyor';
+      const bobSpeed = isBusy ? 4.2 : 2.1;
+      const bobAmp = isBusy ? 0.16 : 0.10;
+
+      m.floatGroup.position.y = m.baseHoverY + Math.sin(elapsed * bobSpeed + m.phaseOffset) * bobAmp;
+
+      if (!m.isGM && this.motionMode === 'wander') {
+        if (now > m.wanderPauseUntil) {
+          const dist = m.root.position.distanceTo(m.wanderTarget);
+          if (dist < 0.25) {
+            const angle = Math.random() * Math.PI * 2;
+            const r = 4.2 + Math.random() * 5.8;
+            m.wanderTarget.set(Math.cos(angle) * r, 0, Math.sin(angle) * r);
+            m.wanderPauseUntil = now + 1800 + Math.random() * 2500;
+          } else {
+            const dir = m.wanderTarget.clone().sub(m.root.position).normalize();
+            m.root.position.addScaledVector(dir, 0.035);
+          }
+        }
+      } else {
+        m.root.position.lerp(m.stationPos, 0.06);
+      }
+
+      m.floatGroup.rotation.y = Math.sin(elapsed * 0.9 + m.phaseOffset) * 0.18 + this.pointerNDC.x * 0.22;
+      m.floatGroup.rotation.z = Math.sin(elapsed * 1.4 + m.phaseOffset) * (isBusy ? 0.08 : 0.03);
+
+      const ringSpeed = isBusy ? 2.6 : 0.85;
+      m.orbitalRing1.rotation.z = elapsed * ringSpeed + m.phaseOffset;
+      m.orbitalRing2.rotation.z = -elapsed * (ringSpeed * 0.8) + m.phaseOffset;
+
+      if (isBusy) {
+        m.leftHand.position.y = -0.1 + Math.sin(elapsed * 12) * 0.14;
+        m.rightHand.position.y = -0.1 + Math.cos(elapsed * 12) * 0.14;
+        m.leftHand.position.z = 0.35 + Math.cos(elapsed * 10) * 0.08;
+        m.rightHand.position.z = 0.35 + Math.sin(elapsed * 10) * 0.08;
+      } else {
+        m.leftHand.position.y = -0.15 + Math.sin(elapsed * 2.5 + m.phaseOffset) * 0.07;
+        m.rightHand.position.y = -0.15 + Math.cos(elapsed * 2.5 + m.phaseOffset) * 0.07;
+        m.leftHand.position.z = 0.25;
+        m.rightHand.position.z = 0.25;
+      }
+
+      const pulse = 0.88 + Math.sin(elapsed * (isBusy ? 8 : 3) + m.phaseOffset) * 0.18;
+      m.bulbMesh.scale.setScalar(pulse);
+      m.thrusterGroup.scale.setScalar(0.92 + Math.sin(elapsed * 7 + m.phaseOffset) * 0.1);
+
+      if (now >= m.nextBlinkAt && !m.blinkState) {
+        m.blinkState = true;
+        this.drawMascotFace(m, elapsed);
+        setTimeout(() => {
+          m.blinkState = false;
+          m.nextBlinkAt = performance.now() + 2600 + Math.random() * 2800;
+          this.drawMascotFace(m, this.clock.getElapsedTime());
+        }, 140);
+      } else if (isBusy || Math.abs(this.pointerNDC.x) > 0.01) {
+        this.drawMascotFace(m, elapsed);
+      }
+
+      const headWorldPos = new THREE.Vector3();
+      m.floatGroup.getWorldPosition(headWorldPos);
+      headWorldPos.y += (m.isGM ? 2.45 : 1.32);
+      headWorldPos.project(this.camera);
+
+      if (headWorldPos.z < 1) {
+        const sx = (headWorldPos.x * 0.5 + 0.5) * canvasW;
+        const sy = (-(headWorldPos.y * 0.5) + 0.5) * canvasH;
+        m.labelEl.style.display = 'flex';
+        m.labelEl.style.left = `${sx}px`;
+        m.labelEl.style.top = `${sy}px`;
+      } else {
+        m.labelEl.style.display = 'none';
+      }
+
+      if (!m.isGM) {
+        const link = this.energyLinks.get(m.id);
+        if (link) {
+          link.curve.v2.set(m.root.position.x, link.isActive ? 1.5 : 0.18, m.root.position.z);
+          if (link.isActive) {
+            link.progress = (link.progress + 0.018) % 1;
+            const pt = link.curve.getPoint(link.progress);
+            link.packet.position.copy(pt);
+          }
+        }
+      }
+    }
+
+    this.renderer.render(this.scene, this.camera);
+  }
+}
+
+window.office3D = new Office3DEngine();
+if (appState && appState.config) {
+  window.office3D.syncWithState(appState);
+}
+</script>
+</body>
+</html>
