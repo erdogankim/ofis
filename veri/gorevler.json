@@ -15,7 +15,7 @@
       "sorumluRol": "Genel Müdür",
       "raporDosya": "2026-11-15-grv-136856-ofis-genel-durumunu-ozetleyen-kisa-bir-bas.md",
       "sessionId": "a3d9c2b6-6936-473c-b963-a69de5498ba1",
-      "rapor": "### Görev Özeti ve Yapılan İşlemler\n\nOfis genel durumunu, mevcut altyapı ve operasyonel hazırlığı özetleyen başlangıç raporu Genel Müdür yetkisiyle hazırlanmış ve merkezi raporlar klasörüne kaydedilmiştir.\n\n- **Yapılan İşlem:** `D:/ofis` çalışma dizini, konfigürasyon (`ofis.config.json`), görev geçmişi (`veri/gorevler.json`) ve çalışan kadrosu incelenerek kurumsal özet ve durum tablosu oluşturuldu.\n- **Rapor Dosyası:** [2026-11-15-grv-136856-ofis-genel-durumunu-ozetleyen-kisa-bir-bas.md](file:///D:/ofis/raporlar/2026-11-15-grv-136856-ofis-genel-durumunu-ozetleyen-kisa-bir-bas.md)\n- **Durum:** Ofis sistemi aktif, yönetim paneli çalışır durumda ve yeni görev dağıtımlarına hazırdır.",
+      "rapor": "### Görev Özeti ve Yapılan İşlemler\n\nOfis genel durumunu, mevcut altyapı ve operasyonel hazırlığı özetleyen başlangıç raporu Genel Müdür yetkisiyle hazırlanmış ve merkezi raporlar klasörüne kaydedilmiştir.\n\n- **Yapılan İşlem:** `D:/ofis` çalışma dizini, konfigürasyon (`ofis.config.json`), görev geçmişi (`veri/gorevler.json`) ve çalışan kadrosu incelenerek kurumsal özet ve durum tablosu oluşturuldu.\n- **Rapor Dosyası:** [2026-11-15-grv-136856-ofis-genel-durumunu-ozetleyen-kisa-bir-bas.md](file:////opt/saas/apps/ofis/raporlar/2026-11-15-grv-136856-ofis-genel-durumunu-ozetleyen-kisa-bir-bas.md)\n- **Durum:** Ofis sistemi aktif, yönetim paneli çalışır durumda ve yeni görev dağıtımlarına hazırdır.",
       "hata": null,
       "token": {
         "input": 28172,
@@ -31,9 +31,9 @@
       "bitisZamani": "2026-11-15T22:27:07.075Z",
       "planOzeti": "Genel Müdür görevi üstlendi.",
       "sorumluRol": "Genel Müdür",
-      "ciktiKlasoru": "D:/ofis/genel-mudur/ofis-ciktilari/2026-11-15-GRV-609676",
+      "ciktiKlasoru": "/opt/saas/apps/ofis/genel-mudur/ofis-ciktilari/2026-11-15-GRV-609676",
       "sessionId": "d1edf13d-ec15-4760-b3c3-fb036d954103",
-      "rapor": "Merhaba Mustafa Bey, Dijital Ajan Ofisi sisteminin Gemini altyapısı ile aktif ve çalışır durumda olduğunu teyit ederim.\n\n---\n\n### Görev Raporu\n\n- **Ne Yapıldı:** Sistemin Gemini ile aktifliği doğrulanmış, Genel Müdür görev talimatı kurallarına uygun olarak durum teyit raporu oluşturulmuştur.\n- **Dosyalar Nerede:** [sistem_teyit.md](file:///D:/ofis/genel-mudur/ofis-ciktilari/2026-11-15-GRV-609676/sistem_teyit.md)\n- **Onay Bekleyen İşler:** Bulunmamaktadır.",
+      "rapor": "Merhaba Mustafa Bey, Dijital Ajan Ofisi sisteminin Gemini altyapısı ile aktif ve çalışır durumda olduğunu teyit ederim.\n\n---\n\n### Görev Raporu\n\n- **Ne Yapıldı:** Sistemin Gemini ile aktifliği doğrulanmış, Genel Müdür görev talimatı kurallarına uygun olarak durum teyit raporu oluşturulmuştur.\n- **Dosyalar Nerede:** [sistem_teyit.md](file:////opt/saas/apps/ofis/genel-mudur/ofis-ciktilari/2026-11-15-GRV-609676/sistem_teyit.md)\n- **Onay Bekleyen İşler:** Bulunmamaktadır.",
       "hata": null,
       "token": {
         "input": 13488,

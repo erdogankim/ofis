@@ -21,7 +21,7 @@ Dijital Ajan Ofisi altyapısı `D:/ofis` dizini altında başarıyla kurulmuş v
 | **Patron** | Mustafa | Ofis yöneticisi ve karar verici |
 | **Yönetici Model** | Gemini 3.8 Flash (High) | Görev analizi, planlama ve raporlama motoru |
 | **Arayüz Portu** | 4747 | Yerel yönetim paneli (`http://localhost:4747`) |
-| **Merkezi Rapor Klasörü** | [raporlar](file:///D:/ofis/raporlar) | Hazırlanan tüm kurumsal raporların toplandığı ana dizin |
+| **Merkezi Rapor Klasörü** | [raporlar](file:////opt/saas/apps/ofis/raporlar) | Hazırlanan tüm kurumsal raporların toplandığı ana dizin |
 | **Mevcut Kadro** | Genel Müdür (1 Aktif) | Görev dağıtımı ve raporlama sorumlusu |
 | **Alt Çalışanlar** | Henüz tanımlanmadı (`calisanlar/` boş) | İhtiyaç halinde yeni uzman roller eklenecektir |
 

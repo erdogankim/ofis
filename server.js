@@ -307,7 +307,7 @@ function runGeminiWorkerStep(worker, promptText, gorevObj) {
     const fullPrompt = [
       `[OFİS GÖREV TALİMATI]`,
       `- Rolün: ${worker.rol} (Bulunduğun klasördeki GEMINI.md kurallarına sadık kal).`,
-      `- Merkezi Rapor Klasörü: "D:/ofis/raporlar"`,
+      `- Merkezi Rapor Klasörü: "${REPORTS_DIR}"`,
       `- Hazırlayacağın raporu mutlaka "${suggestedReportPath}" dosyasına Markdown (.md) formatında kaydet.`,
       `- YASAK: Mevcut kaynak dosyaları silme, dışarıda yayınlama/paylaşma/ödeme işlemi yapma.`,
       `- İş bitince ne yaptığını ve rapor dosyasının adını kısaca özetle.`,
@@ -589,17 +589,22 @@ function parseJsonBody(req) {
   });
 }
 
-function sendJson(res, status, data) {
+function sendJson(res, status, data, reqMethod) {
   res.writeHead(status, {
     'Content-Type': 'application/json; charset=utf-8',
     'Cache-Control': 'no-store'
   });
+  if (reqMethod === 'HEAD') {
+    return res.end();
+  }
   res.end(JSON.stringify(data));
 }
 
 const server = http.createServer(async (req, res) => {
   const urlObj = new URL(req.url, `http://${req.headers.host || '127.0.0.1'}`);
   const pathname = urlObj.pathname;
+
+  const isGetOrHead = req.method === 'GET' || req.method === 'HEAD';
 
   if (req.method === 'GET' && pathname === '/api/akis') {
     res.writeHead(200, {
@@ -613,26 +618,26 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
-  if (req.method === 'GET' && pathname === '/api/durum') {
-    return sendJson(res, 200, getSanitizedState());
+  if (isGetOrHead && pathname === '/api/durum') {
+    return sendJson(res, 200, getSanitizedState(), req.method);
   }
 
-  if (req.method === 'GET' && pathname === '/api/raporlar') {
+  if (isGetOrHead && pathname === '/api/raporlar') {
     return sendJson(res, 200, {
       klasor: REPORTS_DIR.replace(/\\/g, '/'),
       raporlar: listReports()
-    });
+    }, req.method);
   }
 
-  if (req.method === 'GET' && pathname === '/api/rapor') {
+  if (isGetOrHead && pathname === '/api/rapor') {
     const rawName = urlObj.searchParams.get('dosya') || '';
     const safeName = path.basename(rawName);
     if (!safeName || !safeName.toLowerCase().endsWith('.md')) {
-      return sendJson(res, 400, { hata: 'Geçersiz rapor dosyası.' });
+      return sendJson(res, 400, { hata: 'Geçersiz rapor dosyası.' }, req.method);
     }
     const fullPath = path.join(REPORTS_DIR, safeName);
     if (!fs.existsSync(fullPath)) {
-      return sendJson(res, 404, { hata: 'Rapor dosyası bulunamadı.' });
+      return sendJson(res, 404, { hata: 'Rapor dosyası bulunamadı.' }, req.method);
     }
     const stat = fs.statSync(fullPath);
     const icerik = fs.readFileSync(fullPath, 'utf8');
@@ -641,16 +646,16 @@ const server = http.createServer(async (req, res) => {
       yol: fullPath.replace(/\\/g, '/'),
       tarih: stat.mtime.toLocaleString('tr-TR'),
       icerik
-    });
+    }, req.method);
   }
 
-  if (req.method === 'GET' && pathname === '/api/calisan-md') {
+  if (isGetOrHead && pathname === '/api/calisan-md') {
     const id = urlObj.searchParams.get('id');
     const c = (config.calisanlar || []).find(w => w.id === id);
-    if (!c) return sendJson(res, 404, { hata: 'Çalışan bulunamadı' });
+    if (!c) return sendJson(res, 404, { hata: 'Çalışan bulunamadı' }, req.method);
     const mdPath = path.join(c.klasor, 'GEMINI.md');
     const icerik = fs.existsSync(mdPath) ? fs.readFileSync(mdPath, 'utf8') : 'GEMINI.md henüz oluşturulmamış.';
-    return sendJson(res, 200, { id: c.id, rol: c.rol, klasor: c.klasor, icerik });
+    return sendJson(res, 200, { id: c.id, rol: c.rol, klasor: c.klasor, icerik }, req.method);
   }
 
   if (req.method === 'POST' && pathname === '/api/gorev') {
@@ -710,7 +715,7 @@ const server = http.createServer(async (req, res) => {
           ``,
           `## Görevlerin`,
           `- ${body.aciklama || 'Verilen görevleri kendi uzmanlık alanında yerine getir ve raporla.'}`,
-          `- Hazırladığın raporları mutlaka \`D:/ofis/raporlar/\` klasörüne Markdown (.md) olarak kaydet.`,
+          `- Hazırladığın raporları mutlaka \`${REPORTS_DIR}\` klasörüne Markdown (.md) olarak kaydet.`,
           ``,
           `## Çıktı Kuralları`,
           `- Türkçe, kısa, net Markdown çıktısı üret.`,
@@ -753,7 +758,7 @@ const server = http.createServer(async (req, res) => {
     }
   }
 
-  if (req.method === 'GET') {
+  if (isGetOrHead) {
     const reqFile = (pathname === '/' || pathname === '/index.html') ? 'index.html' : pathname.replace(/^\/+/, '');
     const safeTarget = path.normalize(path.join(PUBLIC_DIR, reqFile));
     if (safeTarget.startsWith(PUBLIC_DIR) && fs.existsSync(safeTarget) && fs.statSync(safeTarget).isFile()) {
@@ -768,6 +773,9 @@ const server = http.createServer(async (req, res) => {
         '.png': 'image/png'
       };
       res.writeHead(200, { 'Content-Type': mimeMap[ext] || 'application/octet-stream' });
+      if (req.method === 'HEAD') {
+        return res.end();
+      }
       return res.end(fs.readFileSync(safeTarget));
     }
   }
@@ -777,5 +785,5 @@ const server = http.createServer(async (req, res) => {
 
 const PORT = (config.ofis && config.ofis.port) || 4747;
 server.listen(PORT, '127.0.0.1', () => {
-  console.log(`Ofis aktif: http://localhost:${PORT} (Motor: Gemini | Raporlar: D:\\ofis\\raporlar)`);
+  console.log(`Ofis aktif: http://localhost:${PORT} (Motor: Gemini | Raporlar: ${REPORTS_DIR})`);
 });
