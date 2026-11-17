@@ -18,18 +18,6 @@
     {
       "id": "yonetim",
       "ad": "Yönetim"
-    },
-    {
-      "id": "muhendislik",
-      "ad": "Yazılım & Mühendislik"
-    },
-    {
-      "id": "analiz",
-      "ad": "Araştırma & Analiz"
-    },
-    {
-      "id": "kreatif",
-      "ad": "Tasarım & Medya"
     }
   ],
   "calisanlar": [
@@ -40,42 +28,6 @@
       "klasor": "/opt/saas/apps/ofis/genel-mudur",
       "renk": "#10b981",
       "aciklama": "Görevleri analiz eder, doğru çalışana dağıtır ve raporları /opt/saas/apps/ofis/raporlar klasörüne .md olarak bırakır.",
-      "model": "gemini-3.8-flash-high"
-    },
-    {
-      "id": "yazilim-uzmani",
-      "rol": "Yazılım Uzmanı",
-      "ekip": "muhendislik",
-      "klasor": "/opt/saas/apps/ofis/calisanlar/yazilim-uzmani",
-      "renk": "#06b6d4",
-      "aciklama": "Kod mimarisi, hata analizi, tam yığın (Full-Stack) geliştirme ve teknik dokümantasyon görevlerini yürütür.",
-      "model": "gemini-3.8-flash-high"
-    },
-    {
-      "id": "arastirma-uzmani",
-      "rol": "Araştırma Uzmanı",
-      "ekip": "analiz",
-      "klasor": "/opt/saas/apps/ofis/calisanlar/arastirma-uzmani",
-      "renk": "#8b5cf6",
-      "aciklama": "Derinlemesine teknik araştırma, kaynak taraması, rakip analizi ve fizibilite raporları hazırlar.",
-      "model": "gemini-3.8-flash-high"
-    },
-    {
-      "id": "veri-analisti",
-      "rol": "Veri & Finans Analisti",
-      "ekip": "analiz",
-      "klasor": "/opt/saas/apps/ofis/calisanlar/veri-analisti",
-      "renk": "#f59e0b",
-      "aciklama": "Veri kümelerini inceler, performans metriklerini, maliyet/finans tablolarını ve özet raporları çıkarır.",
-      "model": "gemini-3.8-flash-high"
-    },
-    {
-      "id": "tasarim-uzmani",
-      "rol": "UI/UX & Medya Uzmanı",
-      "ekip": "kreatif",
-      "klasor": "/opt/saas/apps/ofis/calisanlar/tasarim-uzmani",
-      "renk": "#ec4899",
-      "aciklama": "Arayüz tasarımı, 3D görselleştirme fikirleri, kullanıcı deneyimi iyileştirmeleri ve sunum içerikleri üretir.",
       "model": "gemini-3.8-flash-high"
     }
   ],
