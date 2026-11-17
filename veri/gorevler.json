@@ -1,8 +1,53 @@
 {
   "toplamToken": {
-    "input": 0,
-    "output": 0,
-    "cacheRead": 0
+    "input": 106625,
+    "output": 12239,
+    "cacheRead": 825311
   },
-  "gorevler": []
+  "gorevler": [
+    {
+      "id": "GRV-404301",
+      "metin": "aras projesinin son hali nedir ?",
+      "durum": "bitti",
+      "baslangicZamani": "2026-11-17T15:13:24.302Z",
+      "bitisZamani": "2026-11-17T15:16:42.957Z",
+      "planOzeti": "Genel Müdür görevi üstlendi.",
+      "sorumluRol": "Genel Müdür",
+      "raporDosya": "2026-11-17-grv-404301-aras-projesinin-son-hali-nedir.md",
+      "sessionId": "ab100f4e-4c58-4fce-bedb-933b4141c57e",
+      "rapor": "**Mustafa Bey**,\n\nAras Otomotiv (**Aras Service / Volvo Özel Servis Yönetim Ekosistemi**) projesinin mevcut teknik durumu, Git sürüm geçmişi, Docker konteynerleri, veri tabanı ve canlı yayın altyapısı detaylı şekilde incelenmiş ve hazırlanan kapsamlı durum raporu merkezi rapor klasörüne kaydedilmiştir.\n\n---\n\n### Yapılan İnceleme ve Tespit Özeti\n\n1. **Çalışma ve Canlı Yayın Durumu:**\n   - Proje **aktif, kararlı ve üretim ortamında (production live)** çalışmaktadır.\n   - [Caddy](file:///etc/caddy/Caddyfile) tersine proxy üzerinden **`https://oto.erdogan.kim`** (Next.js 16 Yönetim Portalı) ve **`https://test.erdogan.kim`** (Statik Vitrin & API/Swagger Dokümantasyonu) adreslerinde SSL korumalı olarak yayındadır.\n   - Docker üzerinde çalışan `saas_aras_web` (port 3000) ve `saas_aras_api` (FastAPI - port 8000) konteynerleri ayaktadır ve sağlıklı yanıt vermektedir.\n\n2. **Git ve Kod Tabanı Durumu:**\n   - [arasotomotiv](file:///opt/saas/apps/arasotomotiv) yerel deposu `origin/main` ile tam senkrondur, çalışma ağacı temizdir.\n   - Son commit **15 Kasım 2026** tarihlidir (`7d03a08`).\n\n3. **Fonksiyonel ve Mimari Gelişmeler:**\n   - **Hızlı Araç Kabul & Kalıcılık:** Yapılan son güncelleme ile araç kabul işlemleri doğrudan paylaşımlı [aras_db.json](file:///opt/saas/apps/arasotomotiv/data/aras_db.json) veritabanına yazılmaktadır; müşteri arama modalı, çoklu araç seçimi ve otomatik servis tamamlama özellikleri aktiftir.\n   - **Atölye ve Müşteri Portalları:** 6 lift canlı durum telemetrisi, 5 aşamalı iş emri takibi ve [Müşteri Şeffaflık Portalı](file:///opt/saas/apps/arasotomotiv/web/src/app/musteri-portali/page.tsx) çalışır durumdadır.\n   - **AI Servisleri:** Plaka OCR, kaporta hasar ekspertizi, gösterge paneli (kadran/KM/arıza ışıkları) okuma ve VIDA/DTC arıza teşhis uç noktaları aktiftir.\n   - **Mimari Not:** Saha gürültüsü ve pratik kullanım nedenleriyle sesli asistan prototipi arşive ([archive/voice_assistant](file:///opt/saas/apps/arasotomotiv/archive)) kaldırılmış, yerine yüksek hızlı form ve mobil odaklı araç kabul arayüzü devreye alınmıştır.\n\n---\n\n### Kaydedilen Rapor Dosyası\n\nHazırlanan detaylı rapor aşağıdaki dosyaya kaydedilmiştir:\n- **Dosya Yolu:** [2026-11-17-grv-404301-aras-projesinin-son-hali-nedir.md](file:///opt/saas/apps/ofis/raporlar/2026-11-17-grv-404301-aras-projesinin-son-hali-nedir.md)",
+      "hata": null,
+      "token": {
+        "input": 106625,
+        "output": 12239,
+        "cacheRead": 825311,
+        "toplam": 944175
+      },
+      "ajanKullanimlari": [
+        {
+          "asama": "İcra & Raporlama",
+          "ajanId": "genel-mudur",
+          "rol": "Genel Müdür",
+          "talimat": "aras projesinin son hali nedir ?",
+          "raporDosya": "2026-11-17-grv-404301-aras-projesinin-son-hali-nedir.md",
+          "token": {
+            "input": 106625,
+            "output": 12239,
+            "cacheRead": 825311,
+            "toplam": 944175
+          }
+        }
+      ],
+      "ajanOzet": {
+        "genel-mudur": {
+          "rol": "Genel Müdür",
+          "input": 106625,
+          "output": 12239,
+          "cacheRead": 825311,
+          "toplam": 944175,
+          "adimSayisi": 1
+        }
+      }
+    }
+  ]
 }
