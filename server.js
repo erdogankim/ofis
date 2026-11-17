@@ -22,14 +22,187 @@ function saveConfig(cfg) {
 }
 
 function loadTasksData() {
-  try {
-    if (fs.existsSync(TASKS_PATH)) {
-      return JSON.parse(fs.readFileSync(TASKS_PATH, 'utf8'));
-    }
-  } catch (e) {}
-  return {
+  let data = {
     toplamToken: { input: 0, output: 0, cacheRead: 0 },
     gorevler: []
+  };
+  try {
+    if (fs.existsSync(TASKS_PATH)) {
+      data = JSON.parse(fs.readFileSync(TASKS_PATH, 'utf8'));
+    }
+  } catch (e) {}
+
+  if (!data.toplamToken) {
+    data.toplamToken = { input: 0, output: 0, cacheRead: 0 };
+  }
+  if (!Array.isArray(data.gorevler)) {
+    data.gorevler = [];
+  }
+
+  // Geçmiş görevlerin ve token kayıtlarının normalizasyonu
+  for (const g of data.gorevler) {
+    if (!g.token) {
+      g.token = { input: 0, output: 0, cacheRead: 0, toplam: 0 };
+    } else {
+      g.token.toplam = (g.token.input || 0) + (g.token.output || 0) + (g.token.cacheRead || 0);
+    }
+
+    if (!Array.isArray(g.ajanKullanimlari) || g.ajanKullanimlari.length === 0) {
+      const r = (g.sorumluRol || '').toLowerCase();
+      let aId = 'genel-mudur';
+      if (r.includes('yazılım') || r.includes('yazilim')) aId = 'yazilim-uzmani';
+      else if (r.includes('araştırma') || r.includes('arastirma')) aId = 'arastirma-uzmani';
+      else if (r.includes('veri') || r.includes('finans')) aId = 'veri-analisti';
+      else if (r.includes('tasarım') || r.includes('tasarim')) aId = 'tasarim-uzmani';
+
+      g.ajanKullanimlari = [
+        {
+          asama: 'İcra & Raporlama',
+          ajanId: aId,
+          rol: g.sorumluRol || 'Genel Müdür',
+          talimat: g.metin || '',
+          raporDosya: g.raporDosya || null,
+          token: {
+            input: g.token.input || 0,
+            output: g.token.output || 0,
+            cacheRead: g.token.cacheRead || 0,
+            toplam: g.token.toplam || 0
+          }
+        }
+      ];
+    }
+
+    if (!g.ajanOzet || Object.keys(g.ajanOzet).length === 0) {
+      g.ajanOzet = {};
+      for (const k of g.ajanKullanimlari) {
+        const id = k.ajanId || 'genel-mudur';
+        if (!g.ajanOzet[id]) {
+          g.ajanOzet[id] = {
+            rol: k.rol,
+            input: 0,
+            output: 0,
+            cacheRead: 0,
+            toplam: 0,
+            adimSayisi: 0
+          };
+        }
+        const kTok = k.token || {};
+        g.ajanOzet[id].input += (kTok.input || 0);
+        g.ajanOzet[id].output += (kTok.output || 0);
+        g.ajanOzet[id].cacheRead += (kTok.cacheRead || 0);
+        g.ajanOzet[id].toplam += (kTok.toplam || 0);
+        g.ajanOzet[id].adimSayisi += 1;
+      }
+    }
+  }
+
+  return data;
+}
+
+function computeAgentTokenStats(tData, cfg) {
+  const currentConfig = cfg || loadConfig();
+  const currentTasks = tData || tasksData || { gorevler: [], toplamToken: {} };
+  const workers = currentConfig.calisanlar || [];
+  const agentMap = {};
+
+  for (const w of workers) {
+    agentMap[w.id] = {
+      id: w.id,
+      rol: w.rol,
+      ekip: w.ekip,
+      renk: w.renk || '#10b981',
+      aciklama: w.aciklama || '',
+      klasor: w.klasor,
+      input: 0,
+      output: 0,
+      cacheRead: 0,
+      toplam: 0,
+      gorevSayisi: 0,
+      sonGorevZamani: null
+    };
+  }
+
+  if (!agentMap['genel-mudur']) {
+    agentMap['genel-mudur'] = {
+      id: 'genel-mudur',
+      rol: 'Genel Müdür',
+      ekip: 'yonetim',
+      renk: '#10b981',
+      aciklama: 'Görevleri analiz eder ve yönlendirir.',
+      input: 0,
+      output: 0,
+      cacheRead: 0,
+      toplam: 0,
+      gorevSayisi: 0,
+      sonGorevZamani: null
+    };
+  }
+
+  for (const g of currentTasks.gorevler || []) {
+    const kullanimlar = g.ajanKullanimlari || [];
+    const taskAgentsSeen = new Set();
+
+    for (const k of kullanimlar) {
+      const aId = k.ajanId || 'genel-mudur';
+      if (!agentMap[aId]) {
+        agentMap[aId] = {
+          id: aId,
+          rol: k.rol || aId,
+          ekip: 'diger',
+          renk: '#94a3b8',
+          aciklama: '',
+          input: 0,
+          output: 0,
+          cacheRead: 0,
+          toplam: 0,
+          gorevSayisi: 0,
+          sonGorevZamani: null
+        };
+      }
+      const tok = k.token || {};
+      const inp = Number(tok.input || 0);
+      const out = Number(tok.output || 0);
+      const cRead = Number(tok.cacheRead || 0);
+      const tot = Number(tok.toplam || (inp + out + cRead));
+
+      agentMap[aId].input += inp;
+      agentMap[aId].output += out;
+      agentMap[aId].cacheRead += cRead;
+      agentMap[aId].toplam += tot;
+
+      if (!agentMap[aId].sonGorevZamani || (g.baslangicZamani && g.baslangicZamani > agentMap[aId].sonGorevZamani)) {
+        agentMap[aId].sonGorevZamani = g.baslangicZamani;
+      }
+      taskAgentsSeen.add(aId);
+    }
+
+    for (const aId of taskAgentsSeen) {
+      if (agentMap[aId]) agentMap[aId].gorevSayisi++;
+    }
+  }
+
+  const tokObj = currentTasks.toplamToken || {};
+  let genelToplam = {
+    input: Number(tokObj.input || 0),
+    output: Number(tokObj.output || 0),
+    cacheRead: Number(tokObj.cacheRead || 0),
+    toplam: 0,
+    gorevSayisi: (currentTasks.gorevler || []).length
+  };
+  genelToplam.toplam = genelToplam.input + genelToplam.output + genelToplam.cacheRead;
+
+  const agentList = Object.values(agentMap).map(a => {
+    return {
+      ...a,
+      yuzde: genelToplam.toplam > 0 ? Number(((a.toplam / genelToplam.toplam) * 100).toFixed(1)) : 0
+    };
+  });
+
+  agentList.sort((a, b) => b.toplam - a.toplam);
+
+  return {
+    genelToplam,
+    ajanlar: agentList
   };
 }
 
@@ -161,6 +334,7 @@ function getSanitizedState() {
     config: safeConfig,
     durumlar: workerStates,
     toplamToken: tasksData.toplamToken,
+    ajanIstatistikleri: computeAgentTokenStats(tasksData, safeConfig),
     gorevler: tasksData.gorevler.slice(0, 50),
     raporlar: listReports(),
     raporKlasoru: REPORTS_DIR.replace(/\\/g, '/')
@@ -197,7 +371,10 @@ function recordUsage(usage) {
   tasksData.toplamToken.output = (tasksData.toplamToken.output || 0) + Number(usage.output_tokens || 0);
   tasksData.toplamToken.cacheRead = (tasksData.toplamToken.cacheRead || 0) + Number(usage.cache_read_tokens || 0);
   saveTasksData(tasksData);
-  broadcast('token_guncelle', tasksData.toplamToken);
+  broadcast('token_guncelle', {
+    toplamToken: tasksData.toplamToken,
+    ajanIstatistikleri: computeAgentTokenStats(tasksData, config)
+  });
 }
 
 function slugifyTR(str) {
@@ -216,8 +393,11 @@ function runGeneralManagerRouter(gorevMetni, gorevId) {
     const digerCalisanlar = calisanlar.filter(c => c.id !== 'genel-mudur');
     if (digerCalisanlar.length === 0) {
       return resolve({
-        ozet: 'Genel Müdür görevi üstlendi.',
-        adimlar: [{ birim: 'genel-mudur', gorev: gorevMetni }]
+        plan: {
+          ozet: 'Genel Müdür görevi üstlendi.',
+          adimlar: [{ birim: 'genel-mudur', gorev: gorevMetni }]
+        },
+        usage: { input_tokens: 0, output_tokens: 0, cache_read_tokens: 0 }
       });
     }
 
@@ -259,27 +439,37 @@ function runGeneralManagerRouter(gorevMetni, gorevId) {
 
     child.on('close', () => {
       updateWorkerState('genel-mudur', { durum: 'bosta', eylem: 'Hazır', aktifGorevId: null });
+      let routerUsage = { input_tokens: 0, output_tokens: 0, cache_read_tokens: 0 };
       try {
         const outer = JSON.parse(stdout.trim());
-        if (outer.usage) recordUsage(outer.usage);
+        if (outer.usage) {
+          routerUsage = outer.usage;
+          recordUsage(outer.usage);
+        }
         const text = outer.response || stdout;
         const match = text.match(/\{[\s\S]*\}/);
         const parsed = match ? JSON.parse(match[0]) : null;
         if (parsed && Array.isArray(parsed.adimlar) && parsed.adimlar.length > 0) {
-          return resolve(parsed);
+          return resolve({ plan: parsed, usage: routerUsage });
         }
       } catch (e) {}
       resolve({
-        ozet: 'Genel Müdür görevi üstlendi.',
-        adimlar: [{ birim: 'genel-mudur', gorev: gorevMetni }]
+        plan: {
+          ozet: 'Genel Müdür görevi üstlendi.',
+          adimlar: [{ birim: 'genel-mudur', gorev: gorevMetni }]
+        },
+        usage: routerUsage
       });
     });
 
     child.on('error', () => {
       updateWorkerState('genel-mudur', { durum: 'bosta', eylem: 'Hazır', aktifGorevId: null });
       resolve({
-        ozet: 'Genel Müdür görevi üstlendi.',
-        adimlar: [{ birim: 'genel-mudur', gorev: gorevMetni }]
+        plan: {
+          ozet: 'Genel Müdür görevi üstlendi.',
+          adimlar: [{ birim: 'genel-mudur', gorev: gorevMetni }]
+        },
+        usage: { input_tokens: 0, output_tokens: 0, cache_read_tokens: 0 }
       });
     });
   });
@@ -494,9 +684,58 @@ async function processNextInQueue(workerId) {
 async function executeTaskFlow(gorevObj) {
   try {
     config = loadConfig();
-    const plan = await runGeneralManagerRouter(gorevObj.metin, gorevObj.id);
+    const routerResult = await runGeneralManagerRouter(gorevObj.metin, gorevObj.id);
+    const plan = routerResult.plan || { ozet: 'Genel Müdür görevi üstlendi.', adimlar: [{ birim: 'genel-mudur', gorev: gorevObj.metin }] };
+    const routerUsage = routerResult.usage || {};
     gorevObj.planOzeti = plan.ozet;
+
+    const rInp = Number(routerUsage.input_tokens || 0);
+    const rOut = Number(routerUsage.output_tokens || 0);
+    const rCache = Number(routerUsage.cache_read_tokens || 0);
+    const rTot = rInp + rOut + rCache;
+
+    if (rTot > 0) {
+      gorevObj.ajanKullanimlari.push({
+        asama: 'Görev Analizi & Planlama',
+        ajanId: 'genel-mudur',
+        rol: 'Genel Müdür',
+        talimat: gorevObj.metin,
+        raporDosya: null,
+        token: {
+          input: rInp,
+          output: rOut,
+          cacheRead: rCache,
+          toplam: rTot
+        }
+      });
+      gorevObj.token.input = (gorevObj.token.input || 0) + rInp;
+      gorevObj.token.output = (gorevObj.token.output || 0) + rOut;
+      gorevObj.token.cacheRead = (gorevObj.token.cacheRead || 0) + rCache;
+      gorevObj.token.toplam = (gorevObj.token.input || 0) + (gorevObj.token.output || 0) + (gorevObj.token.cacheRead || 0);
+
+      if (!gorevObj.ajanOzet['genel-mudur']) {
+        gorevObj.ajanOzet['genel-mudur'] = {
+          rol: 'Genel Müdür',
+          input: 0,
+          output: 0,
+          cacheRead: 0,
+          toplam: 0,
+          adimSayisi: 0
+        };
+      }
+      gorevObj.ajanOzet['genel-mudur'].input += rInp;
+      gorevObj.ajanOzet['genel-mudur'].output += rOut;
+      gorevObj.ajanOzet['genel-mudur'].cacheRead += rCache;
+      gorevObj.ajanOzet['genel-mudur'].toplam += rTot;
+      gorevObj.ajanOzet['genel-mudur'].adimSayisi += 1;
+    }
+
+    saveTasksData(tasksData);
     broadcast('gorev_guncelle', gorevObj);
+    broadcast('token_guncelle', {
+      toplamToken: tasksData.toplamToken,
+      ajanIstatistikleri: computeAgentTokenStats(tasksData, config)
+    });
 
     let oncekiRapor = '';
     const tumRaporlar = [];
@@ -519,14 +758,54 @@ async function executeTaskFlow(gorevObj) {
       gorevObj.raporDosya = stepResult.raporDosya;
       gorevObj.sessionId = stepResult.sessionId;
       gorevObj.sorumluRol = worker.rol;
-      if (stepResult.usage) {
-        gorevObj.token = {
-          input: (gorevObj.token.input || 0) + (stepResult.usage.input_tokens || 0),
-          output: (gorevObj.token.output || 0) + (stepResult.usage.output_tokens || 0),
-          cacheRead: (gorevObj.token.cacheRead || 0) + (stepResult.usage.cache_read_tokens || 0)
+
+      const stepUsage = stepResult.usage || {};
+      const sInp = Number(stepUsage.input_tokens || 0);
+      const sOut = Number(stepUsage.output_tokens || 0);
+      const sCache = Number(stepUsage.cache_read_tokens || 0);
+      const sTot = sInp + sOut + sCache;
+
+      gorevObj.ajanKullanimlari.push({
+        asama: plan.adimlar.length > 1 ? `Adım ${i + 1}: ${worker.rol}` : `İcra & Raporlama`,
+        ajanId: worker.id,
+        rol: worker.rol,
+        talimat: adim.gorev,
+        raporDosya: stepResult.raporDosya || null,
+        token: {
+          input: sInp,
+          output: sOut,
+          cacheRead: sCache,
+          toplam: sTot
+        }
+      });
+
+      gorevObj.token.input = (gorevObj.token.input || 0) + sInp;
+      gorevObj.token.output = (gorevObj.token.output || 0) + sOut;
+      gorevObj.token.cacheRead = (gorevObj.token.cacheRead || 0) + sCache;
+      gorevObj.token.toplam = (gorevObj.token.input || 0) + (gorevObj.token.output || 0) + (gorevObj.token.cacheRead || 0);
+
+      if (!gorevObj.ajanOzet[worker.id]) {
+        gorevObj.ajanOzet[worker.id] = {
+          rol: worker.rol,
+          input: 0,
+          output: 0,
+          cacheRead: 0,
+          toplam: 0,
+          adimSayisi: 0
         };
       }
+      gorevObj.ajanOzet[worker.id].input += sInp;
+      gorevObj.ajanOzet[worker.id].output += sOut;
+      gorevObj.ajanOzet[worker.id].cacheRead += sCache;
+      gorevObj.ajanOzet[worker.id].toplam += sTot;
+      gorevObj.ajanOzet[worker.id].adimSayisi += 1;
+
+      saveTasksData(tasksData);
       broadcast('gorev_guncelle', gorevObj);
+      broadcast('token_guncelle', {
+        toplamToken: tasksData.toplamToken,
+        ajanIstatistikleri: computeAgentTokenStats(tasksData, config)
+      });
     }
 
     gorevObj.durum = gorevObj.durduruldu ? 'durduruldu' : 'bitti';
@@ -534,6 +813,10 @@ async function executeTaskFlow(gorevObj) {
     activeProcesses.delete(gorevObj.id);
     saveTasksData(tasksData);
     broadcast('gorev_guncelle', gorevObj);
+    broadcast('token_guncelle', {
+      toplamToken: tasksData.toplamToken,
+      ajanIstatistikleri: computeAgentTokenStats(tasksData, config)
+    });
   } catch (err) {
     gorevObj.durum = 'hata';
     gorevObj.hata = err.message;
@@ -542,6 +825,10 @@ async function executeTaskFlow(gorevObj) {
     saveTasksData(tasksData);
     addLiveLog(gorevObj.id, 'genel-mudur', `Hata: ${err.message}`, 'hata');
     broadcast('gorev_guncelle', gorevObj);
+    broadcast('token_guncelle', {
+      toplamToken: tasksData.toplamToken,
+      ajanIstatistikleri: computeAgentTokenStats(tasksData, config)
+    });
   }
 }
 
@@ -559,7 +846,9 @@ function createAndStartTask(metin) {
     sessionId: '',
     rapor: '',
     hata: null,
-    token: { input: 0, output: 0, cacheRead: 0 }
+    token: { input: 0, output: 0, cacheRead: 0, toplam: 0 },
+    ajanKullanimlari: [],
+    ajanOzet: {}
   };
 
   tasksData.gorevler.unshift(gorevObj);
@@ -620,6 +909,13 @@ const server = http.createServer(async (req, res) => {
 
   if (isGetOrHead && pathname === '/api/durum') {
     return sendJson(res, 200, getSanitizedState(), req.method);
+  }
+
+  if (isGetOrHead && pathname === '/api/token-istatistik') {
+    return sendJson(res, 200, {
+      ...computeAgentTokenStats(tasksData, config),
+      gorevler: tasksData.gorevler
+    }, req.method);
   }
 
   if (isGetOrHead && pathname === '/api/raporlar') {

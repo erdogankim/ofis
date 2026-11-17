@@ -1,10 +1,28 @@
 {
   "toplamToken": {
-    "input": 41660,
-    "output": 4090,
-    "cacheRead": 78336
+    "input": 115099,
+    "output": 17090,
+    "cacheRead": 503439
   },
   "gorevler": [
+    {
+      "id": "GRV-749483",
+      "metin": "şu anda hangi domainlerde hangi programların yayında olduğunu göster",
+      "durum": "bitti",
+      "baslangicZamani": "2026-11-15T23:19:09.483Z",
+      "bitisZamani": "2026-11-15T23:21:28.919Z",
+      "planOzeti": "Sunucu ve web yapılandırmaları incelenerek aktif domainler ve üzerlerinde yayında olan uygulamaların tespit edilmesi için Yazılım Uzmanına yönlendirildi.",
+      "sorumluRol": "Yazılım Uzmanı",
+      "raporDosya": "2026-11-15-grv-749483-su-anda-hangi-domainlerde-hangi-programlar.md",
+      "sessionId": "2bf386e6-da23-45cb-83af-0e2e1d07f0c2",
+      "rapor": "Görev başarıyla tamamlanmıştır.\n\n### Yapılan İşlemler\n1. **Port ve Servis Taraması:** `ss -tulpn` ve `ps aux` komutlarıyla sunucuda dinlenen tüm yerel ve genel portlar, aktif systemd servisleri ve arka plan süreçleri tespit edildi.\n2. **Web Sunucusu ve Tersine Proxy İncelemesi:** [/etc/caddy/Caddyfile](file:///etc/caddy/Caddyfile) yapılandırması incelenerek `Caddy v2.11.7` üzerinde tanımlı tüm domainler, yönlendirme kuralları, HTTP Basic Auth güvenlik katmanları ve SSL durumları çıkarıldı.\n3. **Konteyner ve Arka Plan Analizi:** Docker üzerinde koşan `saas-n8n`, `saas_aras_web`, `saas_aras_api`, `bab_web_assistant`, `postgres-postgres-1` konteynerleri ile systemd servisleri (`agy-ofis`, `agy-web-console`, `agy-telegram-bot`) eşleştirildi.\n\n### Özet Domain & Program Dağılımı\n- **`erdogan.kim`** (ve `www.erdogan.kim` 301 yönlendirmesi): **n8n İş Akışı Otomasyonu** (Docker: `saas-n8n`, Port: `59423`, Basic Auth korumalı)\n- **`console.erdogan.kim`**: **Antigravity Web Terminal Konsolu** (`ttyd` + `tmux`, Port: `7681`, Basic Auth korumalı)\n- **`ai.erdogan.kim`**: **Ofis — AI Dijital Ajan Platformu** (Node.js, Port: `4747`, Basic Auth korumalı)\n- **`oto.erdogan.kim`**: **Aras Otomotiv Yönetim Portalı** (Next.js Port: `3000` + FastAPI Backend Port: `8000` + Statik Yönetim Sayfaları)\n- **`test.erdogan.kim`**: **Aras Otomotiv Tanıtım & Test Vitrini** (Statik Dosya Sunucusu + FastAPI Backend Port: `8000`)\n- **Dahili / Dış Yayına Kapalı Servisler:** Bab Web Asistanı (`127.0.0.1:3300`), PostgreSQL 17 (Dahili Docker Ağı), Telegram Bot Daemon (`@erdogankimbot`).\n\n### Rapor Dosyası\nDetaylı teknik döküm ve port haritası aşağıdaki rapor dosyasına kaydedilmiştir:\n- [2026-11-15-grv-749483-su-anda-hangi-domainlerde-hangi-programlar.md](file:///opt/saas/apps/ofis/raporlar/2026-11-15-grv-749483-su-anda-hangi-domainlerde-hangi-programlar.md)",
+      "hata": null,
+      "token": {
+        "input": 64382,
+        "output": 11847,
+        "cacheRead": 425103
+      }
+    },
     {
       "id": "GRV-136856",
       "metin": "Ofis genel durumunu özetleyen kısa bir başlangıç raporu hazırla.",

@@ -634,6 +634,258 @@ html, body {
   color: var(--accent);
   text-decoration: underline;
 }
+
+/* ==================== TOKEN TRACKER & TOPBAR PILL ==================== */
+.token-pill {
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text-dim);
+}
+
+.token-pill:hover {
+  border-color: var(--accent);
+  background: rgba(217, 119, 87, 0.12);
+  box-shadow: 0 0 12px rgba(217, 119, 87, 0.25);
+  transform: translateY(-1px);
+}
+
+.token-pill-badge {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: #191918;
+  background: var(--accent);
+  padding: 2px 7px;
+  border-radius: 6px;
+  letter-spacing: 0.02em;
+  margin-left: 4px;
+}
+
+.btn-token-nav {
+  background: rgba(217, 119, 87, 0.14);
+  border: 1px solid var(--accent);
+  color: var(--text);
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-token-nav:hover {
+  background: var(--accent);
+  color: #191918;
+}
+
+.modal-card.modal-xl {
+  max-width: 1060px;
+  width: 95vw;
+  max-height: 90vh;
+}
+
+.token-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.token-kpi-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  position: relative;
+  overflow: hidden;
+}
+
+.token-kpi-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 3px;
+  background: var(--border);
+}
+
+.token-kpi-card.highlight-accent::before { background: var(--accent); }
+.token-kpi-card.highlight-emerald::before { background: var(--emerald); }
+.token-kpi-card.highlight-blue::before { background: #38bdf8; }
+.token-kpi-card.highlight-purple::before { background: #a855f7; }
+
+.token-kpi-label {
+  font-size: 11.5px;
+  color: var(--text-dim);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.token-kpi-val {
+  font-family: var(--mono);
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--text);
+  line-height: 1.2;
+}
+
+.token-kpi-sub {
+  font-size: 11px;
+  color: var(--text-faint);
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.token-section-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 18px 0 10px 0;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border-soft);
+}
+
+.token-count-pill {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  background: var(--surface-2);
+  color: var(--accent);
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--border-soft);
+}
+
+.agent-token-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 12.5px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+
+.agent-token-table th {
+  background: var(--surface-2);
+  color: var(--text-dim);
+  font-weight: 600;
+  text-align: left;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  font-size: 11.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.agent-token-table td {
+  padding: 11px 14px;
+  border-bottom: 1px solid var(--border-soft);
+  color: var(--text);
+  vertical-align: middle;
+}
+
+.agent-token-table tr:last-child td {
+  border-bottom: none;
+}
+
+.agent-token-table tr:hover td {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.token-bar-wrapper {
+  width: 100%;
+  max-width: 130px;
+  height: 6px;
+  background: var(--surface-2);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.token-bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.3s ease;
+}
+
+.token-filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+
+.token-select {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  outline: none;
+}
+
+.token-select:focus {
+  border-color: var(--accent);
+}
+
+.token-task-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  margin-bottom: 12px;
+  transition: border-color 0.16s ease;
+}
+
+.token-task-card:hover {
+  border-color: rgba(217, 119, 87, 0.6);
+}
+
+.token-task-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+
+.token-substep-row {
+  display: grid;
+  grid-template-columns: 180px 1fr auto;
+  gap: 12px;
+  align-items: center;
+  padding: 8px 12px;
+  background: rgba(0, 0, 0, 0.28);
+  border-radius: 8px;
+  margin-top: 6px;
+  border-left: 3px solid var(--accent);
+  font-size: 12px;
+}
+
+@media (max-width: 768px) {
+  .token-substep-row {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+}
 </style>
 </head>
 <body>
@@ -648,9 +900,15 @@ html, body {
     </div>
 
     <div class="topbar-right">
-      <div class="token-pill">
-        Token: <strong id="tokTotal" style="color:var(--text);">0</strong>
+      <div class="token-pill" onclick="openTokenModal()" title="Ajan Token Harcamalarını ve Görev Dağılımını Görüntüle">
+        <span class="live-dot" style="width:6px;height:6px;background:var(--accent);box-shadow:0 0 6px var(--accent);"></span>
+        <span>Token:</span>
+        <strong id="tokTotal" style="color:var(--text);">0</strong>
+        <span class="token-pill-badge">📊 Detay</span>
       </div>
+      <button type="button" class="btn btn-token-nav" onclick="openTokenModal()">
+        📊 Token Harcamaları
+      </button>
       <button type="button" class="btn btn-primary" onclick="openModal('modalAddWorker')">+ Çalışan Ekle</button>
     </div>
   </header>
@@ -679,9 +937,13 @@ html, body {
         </div>
         <div id="inspDesc" style="font-size:12px;color:#cbd5e1;"></div>
         <div id="inspAction" style="font-family:var(--mono);font-size:11.5px;background:rgba(0,0,0,0.4);padding:7px 10px;border-radius:8px;border:1px solid rgba(255,255,255,0.1);"></div>
+        <div id="inspTokenInfo" style="font-family:var(--mono);font-size:11.5px;color:var(--emerald-light);background:rgba(16,185,129,0.1);padding:6px 10px;border-radius:8px;border:1px solid rgba(16,185,129,0.25);display:flex;align-items:center;justify-content:space-between;gap:6px;">
+          <span id="inspTokenText">⚡ Token: 0</span>
+        </div>
         <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding-top:4px;">
           <span id="inspFolder" style="font-family:var(--mono);font-size:10.5px;color:#94a3b8;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
           <div style="display:flex;gap:6px;flex-shrink:0;">
+            <button type="button" class="mini-btn" id="inspBtnToken" style="color:var(--accent);">📊 Token</button>
             <button type="button" class="mini-btn" id="inspBtnMd">📄 GEMINI.md</button>
           </div>
         </div>
@@ -771,11 +1033,116 @@ html, body {
   </div>
 </div>
 
+<!-- MODAL: AJAN TOKEN HARCAMALARI & GÖREV DAĞILIMI -->
+<div class="modal-backdrop" id="modalTokenTracker" onclick="if(event.target===this)closeModal('modalTokenTracker')">
+  <div class="modal-card modal-xl">
+    <div class="modal-head">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span style="font-size:22px;">📊</span>
+        <div>
+          <strong style="font-size:16px;letter-spacing:-0.01em;">Ajan Token Harcama & Görev Takip Paneli</strong>
+          <div style="font-size:11.5px;color:var(--text-dim);margin-top:2px;">
+            Hangi ajanın hangi görev için ne kadar girdi (input), çıktı (output) ve önbellek (cache) tokenı harcadığının dökümü
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span class="live-dot" title="SSE Canlı Akış Aktif"></span>
+        <button type="button" class="mini-btn" onclick="refreshAndRenderTokens()" title="Verileri Yenile">🔄 Yenile</button>
+        <button type="button" class="mini-btn" onclick="closeModal('modalTokenTracker')">✕ Kapat</button>
+      </div>
+    </div>
+    <div class="modal-body" style="padding:18px 22px;">
+      <!-- KPI Bento Grid -->
+      <div class="token-kpi-grid">
+        <div class="token-kpi-card highlight-accent">
+          <span class="token-kpi-label">Toplam Harcanan Token</span>
+          <div class="token-kpi-val" id="kpiTokGenel">0</div>
+          <div class="token-kpi-sub">
+            <span>📥 Girdi: <strong id="kpiTokInput" style="color:var(--text);">0</strong></span>
+            <span>📤 Çıktı: <strong id="kpiTokOutput" style="color:var(--text);">0</strong></span>
+          </div>
+        </div>
+        <div class="token-kpi-card highlight-emerald">
+          <span class="token-kpi-label">Prompt Cache Tasarrufu</span>
+          <div class="token-kpi-val" id="kpiTokCache" style="color:var(--emerald-light);">0</div>
+          <div class="token-kpi-sub">
+            <span id="kpiCacheRate">%0 Önbellek Verimliliği</span>
+          </div>
+        </div>
+        <div class="token-kpi-card highlight-blue">
+          <span class="token-kpi-label">En Çok Harcayan Ajan</span>
+          <div class="token-kpi-val" id="kpiTopAgent" style="font-size:17px;padding-top:4px;">-</div>
+          <div class="token-kpi-sub" id="kpiTopAgentSub">0 Token</div>
+        </div>
+        <div class="token-kpi-card highlight-purple">
+          <span class="token-kpi-label">Toplam Görev & İcra</span>
+          <div class="token-kpi-val" id="kpiTotalTasks">0</div>
+          <div class="token-kpi-sub">
+            <span id="kpiActiveWorkersCount">5 Kayıtlı Ajan</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab / Bölüm 1: Ajan Bazlı Toplam Harcamalar -->
+      <div class="token-section-title">
+        <div style="display:flex;align-items:center;gap:7px;">
+          <span>🤖</span>
+          <span>Ajan Bazlı Token Harcamaları & Sıralaması</span>
+        </div>
+        <span style="font-size:11px;color:var(--text-faint);font-family:var(--mono);">Oransal Dağılım</span>
+      </div>
+
+      <div style="overflow-x:auto;">
+        <table class="agent-token-table">
+          <thead>
+            <tr>
+              <th style="min-width:180px;">Ajan & Rol</th>
+              <th style="min-width:110px;">Bölüm / Ekip</th>
+              <th style="text-align:right;">Girdi (Input)</th>
+              <th style="text-align:right;">Çıktı (Output)</th>
+              <th style="text-align:right;">Önbellek (Cache)</th>
+              <th style="text-align:right;">Toplam Token</th>
+              <th style="min-width:140px;">Payı (%)</th>
+              <th style="text-align:center;">İşlem</th>
+            </tr>
+          </thead>
+          <tbody id="agentTokenTableBody">
+            <!-- Dinamik doldurulacak -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Tab / Bölüm 2: Görev Başına Ajan Harcamaları -->
+      <div class="token-section-title" style="margin-top:24px;">
+        <div style="display:flex;align-items:center;gap:7px;">
+          <span>📋</span>
+          <span>Görev Başına Ajan Harcama Dökümü</span>
+          <span id="tokenTaskCountBadge" class="token-count-pill">0 Görev</span>
+        </div>
+      </div>
+
+      <div class="token-filter-bar">
+        <select id="tokenAgentFilter" class="token-select" onchange="renderTokenTasksList()">
+          <option value="all">🔍 Tüm Ajanlar</option>
+        </select>
+        <input type="text" id="tokenTaskSearch" class="token-select" placeholder="Görev ID veya açıklama ile filtrele..." oninput="renderTokenTasksList()" style="flex:1;min-width:200px;">
+        <button type="button" class="mini-btn" onclick="clearTokenFilters()">Filtreleri Temizle</button>
+      </div>
+
+      <div id="tokenTasksListContainer" class="token-tasks-list">
+        <!-- Dinamik doldurulacak -->
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
 let appState = {
   config: { ekipler: [], calisanlar: [] },
   durumlar: {},
   toplamToken: { input: 0, output: 0, cacheRead: 0 },
+  ajanIstatistikleri: { genelToplam: {}, ajanlar: [] },
   gorevler: [],
   raporlar: []
 };
@@ -1096,11 +1463,348 @@ function appendLogEntry(log) {
   }
 }
 
+let currentTokenFilterAgent = 'all';
+
+function isTokenModalOpen() {
+  const m = document.getElementById('modalTokenTracker');
+  return m && m.classList.contains('open');
+}
+
+function openTokenModal(agentId) {
+  currentTokenFilterAgent = agentId || 'all';
+  openModal('modalTokenTracker');
+  renderTokenTracker();
+}
+
+window.openTokenModal = openTokenModal;
+
+function openTokenModalForAgent(agentId) {
+  openTokenModal(agentId);
+}
+
+window.openTokenModalForAgent = openTokenModalForAgent;
+
+async function refreshAndRenderTokens() {
+  try {
+    const res = await fetch('/api/token-istatistik');
+    if (res.ok) {
+      const data = await res.json();
+      appState.ajanIstatistikleri = {
+        genelToplam: data.genelToplam,
+        ajanlar: data.ajanlar
+      };
+      if (Array.isArray(data.gorevler)) {
+        appState.gorevler = data.gorevler;
+      }
+      if (data.genelToplam) {
+        appState.toplamToken = {
+          input: data.genelToplam.input,
+          output: data.genelToplam.output,
+          cacheRead: data.genelToplam.cacheRead
+        };
+      }
+      renderAll();
+      renderTokenTracker();
+    }
+  } catch (e) {
+    console.error('Token verisi çekilemedi:', e);
+  }
+}
+
+function clearTokenFilters() {
+  currentTokenFilterAgent = 'all';
+  const sel = document.getElementById('tokenAgentFilter');
+  if (sel) sel.value = 'all';
+  const inp = document.getElementById('tokenTaskSearch');
+  if (inp) inp.value = '';
+  renderTokenTasksList();
+}
+
+function renderTokenTracker() {
+  const stats = appState.ajanIstatistikleri || { genelToplam: {}, ajanlar: [] };
+  const genel = stats.genelToplam || {};
+  const totalInp = Number(genel.input || (appState.toplamToken && appState.toplamToken.input) || 0);
+  const totalOut = Number(genel.output || (appState.toplamToken && appState.toplamToken.output) || 0);
+  const totalCache = Number(genel.cacheRead || (appState.toplamToken && appState.toplamToken.cacheRead) || 0);
+  const totalAll = totalInp + totalOut + totalCache;
+
+  // KPI 1: Genel Toplam
+  const elGenel = document.getElementById('kpiTokGenel');
+  if (elGenel) elGenel.textContent = formatNumber(totalAll);
+  const elInp = document.getElementById('kpiTokInput');
+  if (elInp) elInp.textContent = formatNumber(totalInp);
+  const elOut = document.getElementById('kpiTokOutput');
+  if (elOut) elOut.textContent = formatNumber(totalOut);
+
+  // KPI 2: Cache Tasarrufu
+  const elCache = document.getElementById('kpiTokCache');
+  if (elCache) elCache.textContent = formatNumber(totalCache);
+  const cacheEligible = totalInp + totalCache;
+  const cachePercent = cacheEligible > 0 ? ((totalCache / cacheEligible) * 100).toFixed(1) : '0';
+  const elRate = document.getElementById('kpiCacheRate');
+  if (elRate) elRate.textContent = `%${cachePercent} Prompt Caching Verimliliği`;
+
+  // KPI 3: Top Agent
+  const agents = stats.ajanlar || [];
+  const topAgent = agents.length > 0 && agents[0].toplam > 0 ? agents[0] : null;
+  const elTopAgent = document.getElementById('kpiTopAgent');
+  const elTopAgentSub = document.getElementById('kpiTopAgentSub');
+  if (elTopAgent && elTopAgentSub) {
+    if (topAgent) {
+      elTopAgent.innerHTML = `<span style="color:${topAgent.renk || 'var(--accent)'};">●</span> ${escapeHtml(topAgent.rol)}`;
+      elTopAgentSub.textContent = `${formatNumber(topAgent.toplam)} token (%${topAgent.yuzde || 0})`;
+    } else {
+      elTopAgent.textContent = '-';
+      elTopAgentSub.textContent = 'Henüz veri yok';
+    }
+  }
+
+  // KPI 4: Toplam Görev
+  const tasks = appState.gorevler || [];
+  const elTasks = document.getElementById('kpiTotalTasks');
+  if (elTasks) elTasks.textContent = formatNumber(tasks.length);
+  const elWorkers = document.getElementById('kpiActiveWorkersCount');
+  if (elWorkers) elWorkers.textContent = `${agents.length} Kayıtlı Ajan`;
+
+  // Ajan Tablosu
+  const tbody = document.getElementById('agentTokenTableBody');
+  if (tbody) {
+    if (agents.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--text-faint);padding:20px;">Kayıtlı ajan bulunamadı.</td></tr>';
+    } else {
+      let rowsHtml = '';
+      for (let i = 0; i < agents.length; i++) {
+        const a = agents[i];
+        const pct = a.yuzde || 0;
+        const color = a.renk || '#10b981';
+        const isCurrentFilter = currentTokenFilterAgent === a.id;
+        rowsHtml += `
+          <tr style="${isCurrentFilter ? 'background:rgba(217,119,87,0.14);' : ''}">
+            <td>
+              <div style="display:flex;align-items:center;gap:9px;">
+                <span style="width:10px;height:10px;border-radius:50%;background:${color};box-shadow:0 0 8px ${color};flex-shrink:0;"></span>
+                <div>
+                  <strong style="color:var(--text);font-size:13px;">${escapeHtml(a.rol)}</strong>
+                  <div style="font-size:11px;color:var(--text-faint);font-family:var(--mono);">${escapeHtml(a.id)}</div>
+                </div>
+              </div>
+            </td>
+            <td>
+              <span class="badge" style="font-size:11px;background:var(--surface-2);border:1px solid var(--border-soft);padding:3px 8px;border-radius:6px;">
+                ${escapeHtml(a.ekip || 'Yönetim')}
+              </span>
+            </td>
+            <td style="text-align:right;font-family:var(--mono);">${formatNumber(a.input)}</td>
+            <td style="text-align:right;font-family:var(--mono);">${formatNumber(a.output)}</td>
+            <td style="text-align:right;font-family:var(--mono);color:var(--emerald-light);">${formatNumber(a.cacheRead)}</td>
+            <td style="text-align:right;font-family:var(--mono);font-weight:700;color:var(--accent);">${formatNumber(a.toplam)}</td>
+            <td>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <div class="token-bar-wrapper">
+                  <div class="token-bar-fill" style="width:${pct}%;background:${color};"></div>
+                </div>
+                <span style="font-family:var(--mono);font-size:11px;color:var(--text-dim);min-width:36px;">%${pct}</span>
+              </div>
+            </td>
+            <td style="text-align:center;">
+              <button type="button" class="mini-btn" onclick="filterTokensByAgent('${escapeHtml(a.id)}')">
+                ${isCurrentFilter ? '✓ Seçili' : '🔍 Görevleri'}
+              </button>
+            </td>
+          </tr>
+        `;
+      }
+      tbody.innerHTML = rowsHtml;
+    }
+  }
+
+  // Ajan Dropdown Filtresi Doldur
+  const sel = document.getElementById('tokenAgentFilter');
+  if (sel) {
+    const currentVal = currentTokenFilterAgent || sel.value || 'all';
+    let optHtml = `<option value="all">🔍 Tüm Ajanlar (${agents.length})</option>`;
+    for (let i = 0; i < agents.length; i++) {
+      const a = agents[i];
+      optHtml += `<option value="${escapeHtml(a.id)}" ${currentVal === a.id ? 'selected' : ''}>${escapeHtml(a.rol)} (${formatNumber(a.toplam)} token)</option>`;
+    }
+    sel.innerHTML = optHtml;
+    sel.value = currentVal;
+  }
+
+  renderTokenTasksList();
+}
+
+function filterTokensByAgent(agentId) {
+  currentTokenFilterAgent = agentId;
+  const sel = document.getElementById('tokenAgentFilter');
+  if (sel) sel.value = agentId;
+  renderTokenTracker();
+}
+
+function renderTokenTasksList() {
+  const sel = document.getElementById('tokenAgentFilter');
+  const filterAgent = sel ? sel.value : currentTokenFilterAgent;
+  const searchInput = document.getElementById('tokenTaskSearch');
+  const searchTerm = searchInput ? searchInput.value.toLowerCase().trim() : '';
+
+  const container = document.getElementById('tokenTasksListContainer');
+  if (!container) return;
+
+  const tasks = appState.gorevler || [];
+  let filtered = tasks.filter(t => {
+    if (filterAgent && filterAgent !== 'all') {
+      const kullanimlar = t.ajanKullanimlari || [];
+      const hasAgent = kullanimlar.some(k => k.ajanId === filterAgent);
+      if (!hasAgent && t.sorumluRol) {
+        const agentObj = (appState.ajanIstatistikleri?.ajanlar || []).find(a => a.id === filterAgent);
+        if (!agentObj || agentObj.rol !== t.sorumluRol) return false;
+      } else if (!hasAgent) {
+        return false;
+      }
+    }
+    if (searchTerm) {
+      const textMatch = (t.metin || '').toLowerCase().includes(searchTerm);
+      const idMatch = (t.id || '').toLowerCase().includes(searchTerm);
+      const planMatch = (t.planOzeti || '').toLowerCase().includes(searchTerm);
+      if (!textMatch && !idMatch && !planMatch) return false;
+    }
+    return true;
+  });
+
+  const badge = document.getElementById('tokenTaskCountBadge');
+  if (badge) badge.textContent = `${filtered.length} Görev Listeleniyor`;
+
+  if (filtered.length === 0) {
+    container.innerHTML = `
+      <div style="text-align:center;padding:36px;color:var(--text-faint);background:var(--surface);border:1px dashed var(--border);border-radius:var(--radius);">
+        Filtreye uygun görev kaydı bulunamadı.
+      </div>
+    `;
+    return;
+  }
+
+  let html = '';
+  for (let tIdx = 0; tIdx < filtered.length; tIdx++) {
+    const t = filtered[tIdx];
+    const tTok = t.token || { input: 0, output: 0, cacheRead: 0, toplam: 0 };
+    const tTot = tTok.toplam || (Number(tTok.input || 0) + Number(tTok.output || 0) + Number(tTok.cacheRead || 0));
+    const kullanimlar = t.ajanKullanimlari && t.ajanKullanimlari.length > 0 ? t.ajanKullanimlari : [
+      {
+        asama: 'İcra & Raporlama',
+        ajanId: 'genel-mudur',
+        rol: t.sorumluRol || 'Genel Müdür',
+        talimat: t.metin,
+        raporDosya: t.raporDosya || null,
+        token: tTok
+      }
+    ];
+
+    const isRunning = t.durum === 'calisiyor' || t.durum === 'dusunuyor';
+    const isError = t.durum === 'hata';
+    const statusColor = isRunning ? 'var(--yellow)' : (isError ? 'var(--red)' : 'var(--emerald)');
+    const statusBg = isRunning ? 'var(--yellow-soft)' : (isError ? 'var(--red-soft)' : 'var(--emerald-soft)');
+    const statusText = isRunning ? 'Çalışıyor' : (isError ? 'Hata' : 'Tamamlandı');
+
+    const dateStr = t.baslangicZamani ? new Date(t.baslangicZamani).toLocaleString('tr-TR') : '--:--';
+
+    html += `
+      <div class="token-task-card">
+        <div class="token-task-head">
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+            <span style="font-family:var(--mono);font-weight:700;font-size:13px;color:var(--accent);">${escapeHtml(t.id)}</span>
+            <span style="font-size:11px;padding:2px 8px;border-radius:6px;background:${statusBg};color:${statusColor};font-weight:600;">
+              ${statusText}
+            </span>
+            <span style="font-size:11.5px;color:var(--text-faint);font-family:var(--mono);">🕒 ${dateStr}</span>
+          </div>
+          <div style="font-family:var(--mono);font-size:13px;display:flex;align-items:center;gap:10px;">
+            <span style="color:var(--text-dim);font-size:11.5px;">Görev Toplamı:</span>
+            <strong style="color:var(--text);background:var(--surface-2);padding:3px 10px;border-radius:6px;border:1px solid var(--border-soft);">
+              ${formatNumber(tTot)} token
+            </strong>
+          </div>
+        </div>
+
+        <div style="font-size:13px;color:var(--text);margin-bottom:8px;font-weight:500;">
+          ${escapeHtml(t.metin)}
+        </div>
+
+        ${t.planOzeti ? `
+          <div style="font-size:11.5px;color:var(--text-dim);background:rgba(0,0,0,0.25);padding:6px 10px;border-radius:6px;margin-bottom:10px;border-left:2px solid var(--border);">
+            <strong>Plan Özeti:</strong> ${escapeHtml(t.planOzeti)}
+          </div>
+        ` : ''}
+
+        <!-- Ajan Bazlı Adımlar ve Harcamalar -->
+        <div style="margin-top:10px;">
+          <div style="font-size:11px;color:var(--text-faint);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:6px;font-weight:600;">
+            Bu Görevde Çalışan Ajanlar & Token Dağılımı:
+          </div>
+          ${kullanimlar.map((k, kIdx) => {
+            const kTok = k.token || {};
+            const kInp = Number(kTok.input || 0);
+            const kOut = Number(kTok.output || 0);
+            const kCache = Number(kTok.cacheRead || 0);
+            const kTot = Number(kTok.toplam || (kInp + kOut + kCache));
+            const agentMeta = (appState.ajanIstatistikleri?.ajanlar || []).find(a => a.id === k.ajanId) || {};
+            const color = agentMeta.renk || '#10b981';
+
+            return `
+              <div class="token-substep-row">
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <span style="width:8px;height:8px;border-radius:50%;background:${color};box-shadow:0 0 6px ${color};flex-shrink:0;"></span>
+                  <div>
+                    <strong style="font-size:12px;color:var(--text);">${escapeHtml(k.rol || 'Ajan')}</strong>
+                    <div style="font-size:10.5px;color:var(--text-faint);">${escapeHtml(k.asama || `Adım ${kIdx + 1}`)}</div>
+                  </div>
+                </div>
+                <div style="font-size:11.5px;color:var(--text-dim);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+                  ${k.talimat ? `💬 "${escapeHtml(k.talimat.slice(0, 90))}${k.talimat.length > 90 ? '...' : ''}"` : ''}
+                </div>
+                <div style="display:flex;align-items:center;gap:12px;font-family:var(--mono);font-size:11.5px;flex-shrink:0;">
+                  <span title="Girdi Token">📥 ${formatNumber(kInp)}</span>
+                  <span title="Çıktı Token">📤 ${formatNumber(kOut)}</span>
+                  <span title="Cache Read Token" style="color:var(--emerald-light);">⚡ ${formatNumber(kCache)}</span>
+                  <strong style="color:var(--accent);min-width:65px;text-align:right;">= ${formatNumber(kTot)}</strong>
+                  ${(k.raporDosya || t.raporDosya) ? `
+                    <button type="button" class="mini-btn" style="padding:2px 7px;font-size:10.5px;" onclick="loadAndShowReport('${escapeHtml(k.raporDosya || t.raporDosya)}')">
+                      📄 Rapor
+                    </button>
+                  ` : ''}
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      </div>
+    `;
+  }
+  container.innerHTML = html;
+}
+
+async function loadAndShowReport(dosyaAdi) {
+  if (!dosyaAdi) return;
+  try {
+    const res = await fetch(`/api/rapor?dosya=${encodeURIComponent(dosyaAdi)}`);
+    if (res.ok) {
+      const data = await res.json();
+      openMarkdownViewer({
+        baslik: data.dosya || dosyaAdi,
+        yol: data.yol,
+        icerik: data.icerik
+      });
+    }
+  } catch (e) {
+    alert('Rapor yüklenemedi: ' + e.message);
+  }
+}
+
 function connectSSE() {
   const es = new EventSource('/api/akis');
   es.addEventListener('ilk_durum', ev => {
     appState = JSON.parse(ev.data);
     renderAll();
+    if (isTokenModalOpen()) renderTokenTracker();
   });
   es.addEventListener('calisan_durum', ev => {
     const st = JSON.parse(ev.data);
@@ -1114,19 +1818,28 @@ function connectSSE() {
   es.addEventListener('gorev_yeni', ev => {
     const g = JSON.parse(ev.data);
     appState.gorevler = [g, ...(appState.gorevler || []).filter(x => x.id !== g.id)];
+    if (isTokenModalOpen()) renderTokenTracker();
   });
   es.addEventListener('gorev_guncelle', ev => {
     const g = JSON.parse(ev.data);
     const idx = (appState.gorevler || []).findIndex(x => x.id === g.id);
     if (idx >= 0) appState.gorevler[idx] = g;
     else appState.gorevler.unshift(g);
+    if (isTokenModalOpen()) renderTokenTracker();
   });
   es.addEventListener('raporlar_guncelle', ev => {
     appState.raporlar = JSON.parse(ev.data);
   });
   es.addEventListener('token_guncelle', ev => {
-    appState.toplamToken = JSON.parse(ev.data);
+    const d = JSON.parse(ev.data);
+    if (d && d.toplamToken) {
+      appState.toplamToken = d.toplamToken;
+      appState.ajanIstatistikleri = d.ajanIstatistikleri;
+    } else {
+      appState.toplamToken = d;
+    }
     renderAll();
+    if (isTokenModalOpen()) renderTokenTracker();
   });
   es.onerror = () => {
     document.getElementById('sseDot').style.background = 'var(--red)';
@@ -1850,6 +2563,24 @@ class Office3DEngine {
     document.getElementById('inspAction').textContent = `${getStatusLabel(m.durum)}: ${m.eylem || 'Hazır'}`;
     document.getElementById('inspFolder').textContent = `📁 ${m.worker.klasor}`;
     document.getElementById('inspBtnMd').onclick = () => inspectMd(m.id);
+
+    const tokenInfo = document.getElementById('inspTokenInfo');
+    const tokenText = document.getElementById('inspTokenText');
+    const btnToken = document.getElementById('inspBtnToken');
+    if (tokenInfo && tokenText) {
+      const stats = (appState.ajanIstatistikleri && appState.ajanIstatistikleri.ajanlar) || [];
+      const agentStat = stats.find(a => a.id === m.id);
+      if (agentStat && agentStat.toplam > 0) {
+        tokenInfo.style.display = 'flex';
+        tokenText.innerHTML = `⚡ Harcanan Token: <strong>${formatNumber(agentStat.toplam)}</strong> (${agentStat.gorevSayisi} görev)`;
+      } else {
+        tokenInfo.style.display = 'flex';
+        tokenText.innerHTML = `⚡ Harcanan Token: <strong>0</strong> (Henüz görev almadı)`;
+      }
+    }
+    if (btnToken) {
+      btnToken.onclick = () => window.openTokenModal(m.id);
+    }
   }
 
   handleResize() {
